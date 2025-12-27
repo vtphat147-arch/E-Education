@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Eye, Heart, Copy, Check, Code2, ExternalLink, Sparkles } from 'lucide-react'
+import { ArrowLeft, Eye, Heart, Copy, Check, ExternalLink, Sparkles } from 'lucide-react'
 import Header from '../cpnents/Header'
 import { designService, DesignComponent } from '../services/api'
 
