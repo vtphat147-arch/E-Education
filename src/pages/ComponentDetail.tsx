@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Eye, Heart, Copy, Check, Code2, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Eye, Heart, Copy, Check, Code2, ExternalLink, Sparkles } from 'lucide-react'
 import Header from '../cpnents/Header'
 import { designService, DesignComponent } from '../services/api'
 
 const ComponentDetail = () => {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const [component, setComponent] = useState<DesignComponent | null>(null)
+  const [relatedComponents, setRelatedComponents] = useState<DesignComponent[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'html' | 'css' | 'js'>('html')
   const [copied, setCopied] = useState<string | null>(null)
@@ -19,6 +21,16 @@ const ComponentDetail = () => {
         setLoading(true)
         const data = await designService.getComponentById(parseInt(id))
         setComponent(data)
+        
+        // Fetch related components cùng category
+        if (data.category) {
+          const related = await designService.getAllComponents(data.category)
+          // Loại bỏ component hiện tại và lấy tối đa 4 components
+          const filtered = related
+            .filter(c => c.id !== data.id)
+            .slice(0, 4)
+          setRelatedComponents(filtered)
+        }
       } catch (err) {
         console.error('Error fetching component:', err)
       } finally {
@@ -61,11 +73,15 @@ const ComponentDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
         <Header />
         <div className="container mx-auto px-4 py-20">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="w-16 h-16 border-4 border-primary-600 border-t-transparent rounded-full mx-auto mb-4"
+            />
             <p className="text-gray-600">Đang tải...</p>
           </div>
         </div>
@@ -75,7 +91,7 @@ const ComponentDetail = () => {
 
   if (!component) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
         <Header />
         <div className="container mx-auto px-4 py-20">
           <div className="text-center">
@@ -90,108 +106,123 @@ const ComponentDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Header />
       
       <div className="container mx-auto px-4 py-8">
-        {/* Back Button */}
-        <Link
-          to="/components"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+        {/* Back Button với glass effect */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
         >
-          <ArrowLeft className="w-5 h-5" />
-          Quay lại
-        </Link>
+          <button
+            onClick={() => navigate(-1)}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md border border-gray-200 rounded-full text-gray-700 hover:bg-white hover:shadow-lg transition-all duration-300 mb-6"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Quay lại
+          </button>
+        </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Left: Preview */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          {/* Left: Preview với 3D effect */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-xl shadow-lg overflow-hidden"
+            transition={{ duration: 0.6 }}
+            className="relative group"
           >
-            {/* Preview Image */}
-            <div className="relative h-64 bg-gradient-to-br from-gray-100 to-gray-200">
-              <img
-                src={component.preview}
-                alt={component.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none'
-                }}
-              />
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-purple-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden transform transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl">
+              {/* Preview Image */}
+              <div className="relative h-80 bg-gradient-to-br from-gray-100 via-gray-50 to-white overflow-hidden">
+                <img
+                  src={component.preview}
+                  alt={component.name}
+                  className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none'
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              </div>
 
-            {/* Component Info */}
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold mb-2">{component.name}</h1>
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-semibold">
-                      {component.category}
-                    </span>
-                    <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                      {component.type}
-                    </span>
-                    {component.framework && (
-                      <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">
-                        {component.framework}
+              {/* Component Info */}
+              <div className="p-8">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex-1">
+                    <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                      {component.name}
+                    </h1>
+                    <div className="flex flex-wrap items-center gap-3 mb-6">
+                      <span className="px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full text-sm font-semibold shadow-lg">
+                        {component.category}
                       </span>
-                    )}
+                      <span className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-full text-sm font-medium">
+                        {component.type}
+                      </span>
+                      {component.framework && (
+                        <span className="px-4 py-2 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-full text-sm font-semibold shadow-lg">
+                          {component.framework}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <p className="text-gray-700 mb-6">{component.description}</p>
+                <p className="text-gray-700 text-lg leading-relaxed mb-8">{component.description}</p>
 
-              {/* Stats */}
-              <div className="flex items-center gap-6 mb-6">
-                <button
-                  onClick={handleLike}
-                  className="flex items-center gap-2 text-gray-600 hover:text-red-500 transition-colors"
-                >
-                  <Heart className="w-5 h-5" />
-                  <span>{component.likes}</span>
-                </button>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Eye className="w-5 h-5" />
-                  <span>{component.views}</span>
+                {/* Stats với animation */}
+                <div className="flex items-center gap-8 mb-8 pb-8 border-b border-gray-200">
+                  <motion.button
+                    onClick={handleLike}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="flex items-center gap-3 px-6 py-3 bg-red-50 hover:bg-red-100 rounded-xl text-red-600 font-semibold transition-colors"
+                  >
+                    <Heart className={`w-5 h-5 ${component.likes > 0 ? 'fill-red-600' : ''}`} />
+                    <span>{component.likes}</span>
+                  </motion.button>
+                  <div className="flex items-center gap-3 px-6 py-3 bg-blue-50 rounded-xl text-blue-600 font-semibold">
+                    <Eye className="w-5 h-5" />
+                    <span>{component.views}</span>
+                  </div>
                 </div>
-              </div>
 
-              {/* Tags */}
-              {component.tags && (
-                <div className="flex flex-wrap gap-2">
-                  {component.tags.split(',').map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                    >
-                      {tag.trim()}
-                    </span>
-                  ))}
-                </div>
-              )}
+                {/* Tags */}
+                {component.tags && (
+                  <div className="flex flex-wrap gap-2">
+                    {component.tags.split(',').map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-50 border border-gray-200 text-gray-700 rounded-full text-sm font-medium"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </motion.div>
 
-          {/* Right: Code */}
+          {/* Right: Code với glass effect */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-xl shadow-lg overflow-hidden"
+            transition={{ duration: 0.6 }}
+            className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden"
           >
             {/* Code Tabs */}
-            <div className="border-b border-gray-200 flex">
+            <div className="border-b border-gray-200/50 bg-gray-50/50 backdrop-blur-sm flex">
               {(['html', 'css', 'js'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 px-4 py-3 font-medium transition-colors ${
+                  className={`flex-1 px-6 py-4 font-semibold transition-all duration-300 ${
                     activeTab === tab
-                      ? 'text-primary-600 border-b-2 border-primary-600 bg-primary-50'
-                      : 'text-gray-600 hover:text-gray-900'
+                      ? 'text-primary-600 border-b-3 border-primary-600 bg-white/50'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-white/30'
                   }`}
                 >
                   {tab.toUpperCase()}
@@ -200,17 +231,22 @@ const ComponentDetail = () => {
             </div>
 
             {/* Code Display */}
-            <div className="p-6 bg-gray-900 min-h-[400px] max-h-[600px] overflow-auto">
+            <div className="p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-[400px] max-h-[600px] overflow-auto">
               <div className="flex items-center justify-between mb-4">
-                <Code2 className="w-5 h-5 text-gray-400" />
-                <button
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-yellow-400" />
+                  <span className="text-gray-400 text-sm">Code Editor</span>
+                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleCopy(getCodeByTab(), activeTab)}
-                  className="flex items-center gap-2 px-3 py-1 bg-gray-800 text-gray-300 rounded hover:bg-gray-700 transition-colors text-sm"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition-colors text-sm font-medium border border-gray-700"
                 >
                   {copied === activeTab ? (
                     <>
-                      <Check className="w-4 h-4" />
-                      Copied!
+                      <Check className="w-4 h-4 text-green-400" />
+                      <span className="text-green-400">Copied!</span>
                     </>
                   ) : (
                     <>
@@ -218,56 +254,126 @@ const ComponentDetail = () => {
                       Copy
                     </>
                   )}
-                </button>
+                </motion.button>
               </div>
-              <pre className="text-gray-300 text-sm font-mono">
+              <pre className="text-gray-300 text-sm font-mono leading-relaxed">
                 <code>{getCodeByTab()}</code>
               </pre>
-            </div>
-
-            {/* Live Preview Link */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200">
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-                <ExternalLink className="w-5 h-5" />
-                Xem Live Preview
-              </button>
             </div>
           </motion.div>
         </div>
 
-        {/* Live Preview Frame */}
+        {/* Live Preview Frame với 3D effect */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mt-8 bg-white rounded-xl shadow-lg overflow-hidden"
+          transition={{ delay: 0.3 }}
+          className="mb-12 relative group"
         >
-          <div className="p-4 bg-gray-50 border-b border-gray-200">
-            <h3 className="text-lg font-semibold">Live Preview</h3>
-          </div>
-          <div className="p-8 bg-gray-100 min-h-[400px]">
-            <iframe
-              srcDoc={`
-                <!DOCTYPE html>
-                <html>
-                  <head>
-                    <style>${component.cssCode}</style>
-                  </head>
-                  <body>
-                    ${component.htmlCode}
-                    ${component.jsCode ? `<script>${component.jsCode}</script>` : ''}
-                  </body>
-                </html>
-              `}
-              className="w-full h-[400px] border border-gray-300 rounded bg-white"
-              title="Component Preview"
-            />
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+            <div className="p-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200/50 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <h3 className="ml-4 text-xl font-bold text-gray-900">Live Preview</h3>
+              </div>
+              <ExternalLink className="w-5 h-5 text-gray-400" />
+            </div>
+            <div className="p-8 bg-gradient-to-br from-gray-100 via-gray-50 to-white">
+              <iframe
+                srcDoc={`
+                  <!DOCTYPE html>
+                  <html>
+                    <head>
+                      <style>${component.cssCode}</style>
+                    </head>
+                    <body style="margin: 0; padding: 20px;">
+                      ${component.htmlCode}
+                      ${component.jsCode ? `<script>${component.jsCode}</script>` : ''}
+                    </body>
+                  </html>
+                `}
+                className="w-full h-[500px] border-2 border-gray-200 rounded-2xl bg-white shadow-inner"
+                title="Component Preview"
+              />
+            </div>
           </div>
         </motion.div>
+
+        {/* Related Components - Chỉ cùng category */}
+        {relatedComponents.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mt-12"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                More {component.category.charAt(0).toUpperCase() + component.category.slice(1)} Components
+              </h2>
+              <Link
+                to={`/components?category=${component.category}`}
+                className="text-primary-600 hover:text-primary-700 font-semibold flex items-center gap-2"
+              >
+                Xem tất cả <ArrowLeft className="w-4 h-4 rotate-180" />
+              </Link>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {relatedComponents.map((related, index) => (
+                <motion.div
+                  key={related.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 + index * 0.1 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="group"
+                >
+                  <Link
+                    to={`/components/${related.id}`}
+                    className="block bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-2xl transition-all duration-300"
+                  >
+                    <div className="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                      <img
+                        src={related.preview}
+                        alt={related.name}
+                        className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-110"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none'
+                        }}
+                      />
+                      <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        {related.category}
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                        {related.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">{related.description}</p>
+                      <div className="flex items-center gap-4 text-xs text-gray-500">
+                        <div className="flex items-center gap-1">
+                          <Eye className="w-4 h-4" />
+                          <span>{related.views}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Heart className="w-4 h-4" />
+                          <span>{related.likes}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   )
 }
 
 export default ComponentDetail
-
