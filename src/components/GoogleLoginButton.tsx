@@ -44,7 +44,13 @@ const GoogleLoginButton = ({
     
     script.onload = () => {
       if (window.google && buttonRef.current) {
-        const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
+        const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1093420935022-fir4sj8alp1han53qe6tdailmel475bg.apps.googleusercontent.com'
+        
+        if (!clientId) {
+          console.error('Google Client ID is not configured. Please set VITE_GOOGLE_CLIENT_ID environment variable.')
+          onError?.()
+          return
+        }
         
         window.google.accounts.id.initialize({
           client_id: clientId,
