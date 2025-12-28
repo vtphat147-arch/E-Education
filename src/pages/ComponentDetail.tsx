@@ -73,37 +73,31 @@ const ComponentDetail = () => {
 
   const handleLike = async () => {
     if (!id || !component) {
-      if (!isAuthenticated) {
-        navigate('/login')
-        return
-      }
       return
     }
+    
     try {
       // Always increment likes locally for immediate feedback
       const newLikes = (component.likes || 0) + 1
       setComponent({ ...component, likes: newLikes })
       
-      // Call API in background (don't wait for response)
+      // Call API in background (don't wait for response) - only if authenticated
       if (isAuthenticated) {
         designService.likeComponent(parseInt(id)).then((result) => {
           // Update with server response
           setComponent(prev => prev ? { ...prev, likes: result.likes } : null)
         }).catch((err: any) => {
-          if (err.response?.status === 401) {
-            navigate('/login')
-          } else {
-            console.error('Error liking component:', err)
-            // Revert on error
-            setComponent(prev => prev ? { ...prev, likes: (prev.likes || 1) - 1 } : null)
-          }
+          // Silent fail - don't redirect or show error
+          // Just revert the local increment if API fails
+          console.error('Error liking component:', err)
+          setComponent(prev => prev ? { ...prev, likes: Math.max(0, (prev.likes || 1) - 1) } : null)
         })
-      } else {
-        // Not authenticated, just show increment
-        navigate('/login')
       }
+      // If not authenticated, just show the increment locally (no API call, no redirect)
     } catch (err: any) {
       console.error('Error in handleLike:', err)
+      // Revert on error
+      setComponent(prev => prev ? { ...prev, likes: Math.max(0, (prev.likes || 1) - 1) } : null)
     }
   }
 
