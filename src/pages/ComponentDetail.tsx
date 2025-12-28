@@ -124,89 +124,106 @@ const ComponentDetail = () => {
           </button>
         </motion.div>
 
+        {/* Component Title & Info - Full width trên cùng */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 p-6"
+        >
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
+            <div className="flex-1">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                {component.name}
+              </h1>
+              <p className="text-gray-700 text-lg leading-relaxed mb-4">{component.description}</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-sm font-semibold shadow-lg">
+                  {component.category}
+                </span>
+                <span className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-full text-sm font-medium">
+                  {component.type}
+                </span>
+                {component.framework && (
+                  <span className="px-4 py-2 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-full text-sm font-semibold shadow-lg">
+                    {component.framework}
+                  </span>
+                )}
+                {component.tags && (
+                  <>
+                    {component.tags.split(',').slice(0, 3).map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-full text-xs font-medium"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </>
+                )}
+              </div>
+            </div>
+            {/* Stats */}
+            <div className="flex items-center gap-4">
+              <motion.button
+                onClick={handleLike}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 rounded-xl text-red-600 font-semibold transition-colors"
+              >
+                <Heart className={`w-5 h-5 ${component.likes > 0 ? 'fill-red-600' : ''}`} />
+                <span>{component.likes}</span>
+              </motion.button>
+              <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl text-blue-600 font-semibold">
+                <Eye className="w-5 h-5" />
+                <span>{component.views}</span>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Live Preview (Left) & Code (Right) */}
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
-          {/* Left: Preview với 3D effect */}
+          {/* Left: Live Preview */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             className="relative group"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-purple-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden transform transition-all duration-500 hover:scale-[1.02] hover:shadow-3xl">
-              {/* Preview Image */}
-              <div className="relative h-80 bg-gradient-to-br from-gray-100 via-gray-50 to-white overflow-hidden">
-                <img
-                  src={component.preview}
-                  alt={component.name}
-                  className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none'
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200/50 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+                  <h3 className="ml-3 text-lg font-bold text-gray-900">Live Preview</h3>
+                </div>
+                <ExternalLink className="w-4 h-4 text-gray-400" />
               </div>
-
-              {/* Component Info */}
-              <div className="p-8">
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex-1">
-                    <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                      {component.name}
-                    </h1>
-                    <div className="flex flex-wrap items-center gap-3 mb-6">
-                      <span className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-sm font-semibold shadow-lg">
-                        {component.category}
-                      </span>
-                      <span className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-full text-sm font-medium">
-                        {component.type}
-                      </span>
-                      {component.framework && (
-                        <span className="px-4 py-2 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-full text-sm font-semibold shadow-lg">
-                          {component.framework}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-gray-700 text-lg leading-relaxed mb-8">{component.description}</p>
-
-                {/* Stats với animation */}
-                <div className="flex items-center gap-8 mb-8 pb-8 border-b border-gray-200">
-                  <motion.button
-                    onClick={handleLike}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    className="flex items-center gap-3 px-6 py-3 bg-red-50 hover:bg-red-100 rounded-xl text-red-600 font-semibold transition-colors"
-                  >
-                    <Heart className={`w-5 h-5 ${component.likes > 0 ? 'fill-red-600' : ''}`} />
-                    <span>{component.likes}</span>
-                  </motion.button>
-                  <div className="flex items-center gap-3 px-6 py-3 bg-blue-50 rounded-xl text-blue-600 font-semibold">
-                    <Eye className="w-5 h-5" />
-                    <span>{component.views}</span>
-                  </div>
-                </div>
-
-                {/* Tags */}
-                {component.tags && (
-                  <div className="flex flex-wrap gap-2">
-                    {component.tags.split(',').map((tag, idx) => (
-                      <span
-                        key={idx}
-                        className="px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-50 border border-gray-200 text-gray-700 rounded-full text-sm font-medium"
-                      >
-                        {tag.trim()}
-                      </span>
-                    ))}
-                  </div>
-                )}
+              <div className="p-6 bg-gradient-to-br from-gray-100 via-gray-50 to-white">
+                <iframe
+                  srcDoc={`
+                    <!DOCTYPE html>
+                    <html>
+                      <head>
+                        <style>${component.cssCode}</style>
+                      </head>
+                      <body style="margin: 0; padding: 20px;">
+                        ${component.htmlCode}
+                        ${component.jsCode ? `<script>${component.jsCode}</script>` : ''}
+                      </body>
+                    </html>
+                  `}
+                  className="w-full h-[600px] border-2 border-gray-200 rounded-xl bg-white shadow-inner"
+                  title="Component Preview"
+                  sandbox="allow-scripts allow-same-origin"
+                />
               </div>
             </div>
           </motion.div>
 
-          {/* Right: Code với glass effect */}
+          {/* Right: Code Editor */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -231,7 +248,7 @@ const ComponentDetail = () => {
             </div>
 
             {/* Code Display */}
-            <div className="p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-[400px] max-h-[600px] overflow-auto">
+            <div className="p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 min-h-[600px] max-h-[600px] overflow-auto">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-yellow-400" />
@@ -262,45 +279,6 @@ const ComponentDetail = () => {
             </div>
           </motion.div>
         </div>
-
-        {/* Live Preview Frame với 3D effect */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mb-12 relative group"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-          <div className="relative bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-            <div className="p-6 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200/50 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <h3 className="ml-4 text-xl font-bold text-gray-900">Live Preview</h3>
-              </div>
-              <ExternalLink className="w-5 h-5 text-gray-400" />
-            </div>
-            <div className="p-8 bg-gradient-to-br from-gray-100 via-gray-50 to-white">
-              <iframe
-                srcDoc={`
-                  <!DOCTYPE html>
-                  <html>
-                    <head>
-                      <style>${component.cssCode}</style>
-                    </head>
-                    <body style="margin: 0; padding: 20px;">
-                      ${component.htmlCode}
-                      ${component.jsCode ? `<script>${component.jsCode}</script>` : ''}
-                    </body>
-                  </html>
-                `}
-                className="w-full h-[500px] border-2 border-gray-200 rounded-2xl bg-white shadow-inner"
-                title="Component Preview"
-              />
-            </div>
-          </div>
-        </motion.div>
 
         {/* Related Components - Chỉ cùng category */}
         {relatedComponents.length > 0 && (
