@@ -218,9 +218,13 @@ const ComponentDetail = () => {
                 onClick={handleLike}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 rounded-xl text-red-600 font-semibold transition-colors"
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors ${
+                  isLiked 
+                    ? 'bg-red-100 hover:bg-red-200 text-red-700' 
+                    : 'bg-red-50 hover:bg-red-100 text-red-600'
+                }`}
               >
-                <Heart className={`w-5 h-5 ${component.likes > 0 ? 'fill-red-600' : ''}`} />
+                <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-600' : ''}`} />
                 <span>{component.likes}</span>
               </motion.button>
               <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl text-blue-600 font-semibold">
