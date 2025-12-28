@@ -314,7 +314,7 @@ const Profile = () => {
                       className="block bg-white/80 backdrop-blur-xl rounded-xl p-4 hover:shadow-lg transition-all border border-white/20"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex-shrink-0 overflow-hidden relative">
+                        <div className="w-20 h-20 rounded-lg flex-shrink-0 overflow-hidden relative bg-white">
                           {item.component.htmlCode && item.component.cssCode ? (
                             <ComponentPreview
                               htmlCode={item.component.htmlCode}
@@ -325,7 +325,7 @@ const Profile = () => {
                               lazy={true}
                             />
                           ) : (
-                            <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
                               <Code2 className="w-8 h-8 text-gray-400" />
                             </div>
                           )}
