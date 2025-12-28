@@ -309,38 +309,54 @@ const ComponentDetail = () => {
                 />
               </div>
               {/* Action buttons below preview */}
-              <div className="p-4 bg-gray-50/50 border-t border-gray-200/50 flex items-center justify-center gap-4 flex-shrink-0">
+              <div className="p-4 bg-gray-50/50 dark:bg-gray-800/50 border-t border-gray-200/50 dark:border-gray-700/50 flex items-center justify-center gap-3 flex-wrap flex-shrink-0">
+                {/* Like Button */}
                 <motion.button
                   onClick={handleLike}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.9 }}
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors ${
                     isLiked 
-                      ? 'bg-red-100 hover:bg-red-200 text-red-700' 
-                      : 'bg-red-50 hover:bg-red-100 text-red-600'
+                      ? 'bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400' 
+                      : 'bg-white dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 border border-gray-200 dark:border-gray-700'
                   }`}
                 >
-                  <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-600' : ''}`} />
+                  <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-600 dark:fill-red-400' : ''}`} />
                   <span>{component.likes}</span>
                 </motion.button>
-                <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl text-blue-600 font-semibold">
+
+                {/* View Count */}
+                <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-xl text-blue-600 dark:text-blue-400 font-semibold border border-gray-200 dark:border-gray-700">
                   <Eye className="w-5 h-5" />
                   <span>{component.views}</span>
                 </div>
+
+                {/* Favorite Button */}
                 {isAuthenticated && (
                   <motion.button
                     onClick={handleFavorite}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.9 }}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors border ${
                       isFavorited
-                        ? 'bg-indigo-100 text-indigo-600'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-700'
+                        : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700'
                     }`}
                   >
-                    <Heart className={`w-5 h-5 ${isFavorited ? 'fill-indigo-600' : ''}`} />
+                    <Heart className={`w-5 h-5 ${isFavorited ? 'fill-indigo-600 dark:fill-indigo-400' : ''}`} />
                     <span>{isFavorited ? 'Favorited' : 'Favorite'}</span>
                   </motion.button>
+                )}
+
+                {/* Export Dropdown */}
+                <ExportDropdown component={component} />
+
+                {/* Share Dropdown */}
+                {component && (
+                  <ShareDropdown 
+                    componentId={component.id} 
+                    componentName={component.name}
+                  />
                 )}
               </div>
             </div>
@@ -403,18 +419,6 @@ const ComponentDetail = () => {
           </motion.div>
         </div>
 
-        {/* Export Component Section */}
-        {component && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mt-8"
-          >
-            <ExportDropdown component={component} />
-          </motion.div>
-        )}
-
         {/* Framework Code Generator Section */}
         {component && (
           <motion.div
@@ -424,21 +428,6 @@ const ComponentDetail = () => {
             className="mt-8"
           >
             <FrameworkCodeGenerator component={component} />
-          </motion.div>
-        )}
-
-        {/* Share Buttons Section */}
-        {component && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="mt-8"
-          >
-            <ShareButtons 
-              componentId={component.id} 
-              componentName={component.name}
-            />
           </motion.div>
         )}
 
