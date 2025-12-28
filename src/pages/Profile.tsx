@@ -309,15 +309,30 @@ const Profile = () => {
                     <Link
                       key={item.id}
                       to={`/components/${item.componentId}`}
-                      className="block bg-white rounded-xl p-4 hover:shadow-md transition-all border border-gray-200"
+                      className="block bg-white/80 backdrop-blur-xl rounded-xl p-4 hover:shadow-lg transition-all border border-white/20"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex-shrink-0" />
+                        <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex-shrink-0 overflow-hidden relative">
+                          {item.component.htmlCode && item.component.cssCode ? (
+                            <ComponentPreview
+                              htmlCode={item.component.htmlCode}
+                              cssCode={item.component.cssCode}
+                              jsCode={item.component.jsCode || undefined}
+                              name={item.component.name}
+                              height={80}
+                              lazy={true}
+                            />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <Code2 className="w-8 h-8 text-gray-400" />
+                            </div>
+                          )}
+                        </div>
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900 mb-1">{item.component.name}</h3>
                           <p className="text-sm text-gray-600 mb-2 line-clamp-1">{item.component.description}</p>
                           <div className="flex items-center gap-4 text-xs text-gray-500">
-                            <span>{item.component.category}</span>
+                            <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full">{item.component.category}</span>
                             <span>•</span>
                             <span>{new Date(item.viewedAt).toLocaleDateString('vi-VN')}</span>
                           </div>
