@@ -45,8 +45,7 @@ const ComponentDetail = () => {
             undefined, 
             undefined, 
             undefined, 
-            undefined,
-            'popular', 
+            'popular',
             1, 
             10
           )
