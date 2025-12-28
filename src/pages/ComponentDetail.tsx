@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, Eye, Heart, Copy, Check, ExternalLink, Sparkles } from 'lucide-react'
 import Header from '../cpnents/Header'
 import { designService, DesignComponent } from '../services/api'
+import { useAuth } from '../contexts/AuthContext'
+import { userService } from '../services/userService'
 
 const ComponentDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -13,6 +15,8 @@ const ComponentDetail = () => {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'html' | 'css' | 'js'>('html')
   const [copied, setCopied] = useState<string | null>(null)
+  const [isFavorited, setIsFavorited] = useState(false)
+  const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     const fetchComponent = async () => {
@@ -21,6 +25,16 @@ const ComponentDetail = () => {
         setLoading(true)
         const data = await designService.getComponentById(parseInt(id))
         setComponent(data)
+        
+        // Check if favorited (if authenticated)
+        if (isAuthenticated && data.id) {
+          try {
+            const favorited = await userService.checkFavorite(data.id)
+            setIsFavorited(favorited)
+          } catch (err) {
+            // Silent fail
+          }
+        }
         
         // Fetch related components cùng category
         if (data.category) {
@@ -39,7 +53,7 @@ const ComponentDetail = () => {
     }
 
     fetchComponent()
-  }, [id])
+  }, [id, isAuthenticated])
 
   const handleLike = async () => {
     if (!id || !component) return
@@ -48,6 +62,25 @@ const ComponentDetail = () => {
       setComponent({ ...component, likes: result.likes })
     } catch (err) {
       console.error('Error liking component:', err)
+    }
+  }
+
+  const handleFavorite = async () => {
+    if (!id || !isAuthenticated) {
+      navigate('/login')
+      return
+    }
+
+    try {
+      if (isFavorited) {
+        await userService.removeFavorite(parseInt(id))
+        setIsFavorited(false)
+      } else {
+        await userService.addFavorite(parseInt(id))
+        setIsFavorited(true)
+      }
+    } catch (err) {
+      console.error('Error toggling favorite:', err)
     }
   }
 
@@ -222,6 +255,38 @@ const ComponentDetail = () => {
               </div>
             </div>
           </motion.div>
+
+          {/* Stats với Favorite button */}
+          <div className="flex items-center gap-4 mt-4">
+            <motion.button
+              onClick={handleLike}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
+              className="flex items-center gap-2 px-4 py-2 bg-red-50 hover:bg-red-100 rounded-xl text-red-600 font-semibold transition-colors"
+            >
+              <Heart className={`w-5 h-5 ${component.likes > 0 ? 'fill-red-600' : ''}`} />
+              <span>{component.likes}</span>
+            </motion.button>
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl text-blue-600 font-semibold">
+              <Eye className="w-5 h-5" />
+              <span>{component.views}</span>
+            </div>
+            {isAuthenticated && (
+              <motion.button
+                onClick={handleFavorite}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.9 }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors ${
+                  isFavorited
+                    ? 'bg-indigo-100 text-indigo-600'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                <Heart className={`w-5 h-5 ${isFavorited ? 'fill-indigo-600' : ''}`} />
+                <span>{isFavorited ? 'Favorited' : 'Favorite'}</span>
+              </motion.button>
+            )}
+          </div>
 
           {/* Right: Code Editor */}
           <motion.div
