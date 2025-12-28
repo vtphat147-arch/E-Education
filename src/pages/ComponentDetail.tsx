@@ -356,6 +356,21 @@ const ComponentDetail = () => {
           </motion.div>
         </div>
 
+        {/* Share Buttons Section */}
+        {component && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mt-8"
+          >
+            <ShareButtons 
+              componentId={component.id} 
+              componentName={component.name}
+            />
+          </motion.div>
+        )}
+
         {/* Comments Section */}
         {component && (
           <motion.div
