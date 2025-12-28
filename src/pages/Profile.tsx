@@ -38,12 +38,12 @@ const Profile = () => {
       setLoading(true)
       const [profileData, favoritesData, historyData] = await Promise.all([
         userService.getProfile(),
-        userService.getFavorites(),
-        userService.getViewHistory(1, 10)
+        userService.getFavorites().catch(() => []),
+        userService.getViewHistory(1, 10).catch(() => ({ data: [], page: 1, pageSize: 10, total: 0, totalPages: 0 }))
       ])
       setProfile(profileData)
       setFavorites(favoritesData)
-      setViewHistory(historyData.data)
+      setViewHistory(historyData?.data || [])
       setEditData({
         username: profileData.username,
         fullName: profileData.fullName || '',
