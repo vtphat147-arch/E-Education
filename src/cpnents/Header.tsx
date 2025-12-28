@@ -68,31 +68,34 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="relative px-4 py-2 rounded-lg transition-all duration-300 group"
-              >
-                <span
-                  className={`relative z-10 font-medium transition-colors duration-300 ${
-                    isActive(item.path)
-                      ? 'text-indigo-600'
-                      : 'text-gray-700 hover:text-gray-900'
-                  }`}
+            {navItems.map((item) => {
+              const active = isActive(item.path)
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className="relative px-4 py-2 rounded-lg transition-all duration-300"
                 >
-                  {item.label}
-                </span>
-                {isActive(item.path) && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-indigo-50 rounded-lg"
-                    initial={false}
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
-              </Link>
-            ))}
+                  {active && (
+                    <motion.div
+                      layoutId="headerActiveTab"
+                      className="absolute inset-0 bg-indigo-50 rounded-lg"
+                      initial={false}
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span
+                    className={`relative z-10 font-medium transition-colors duration-300 ${
+                      active
+                        ? 'text-indigo-600'
+                        : 'text-gray-700 hover:text-gray-900'
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              )
+            })}
           </nav>
 
           {/* CTA Button */}

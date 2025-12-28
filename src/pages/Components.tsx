@@ -4,6 +4,7 @@ import { Search, Eye, Heart, Code2, Layout, Type, Menu, Navigation, Grid } from 
 import { Link } from 'react-router-dom'
 import Header from '../cpnents/Header'
 import { designService, DesignComponent } from '../services/api'
+import ComponentPreview from '../components/ComponentPreview'
 
 const Components = () => {
   const [searchTerm, setSearchTerm] = useState('')
@@ -137,19 +138,27 @@ const Components = () => {
                   transition={{ duration: 0.4, delay: index * 0.05 }}
                   className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 flex flex-col"
                 >
-                  {/* Preview Image */}
-                  <Link to={`/components/${component.id}`} className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-                    <img
-                      src={component.preview}
-                      alt={component.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none'
-                      }}
-                    />
-                    <div className="absolute top-3 right-3 bg-black/50 text-white px-2 py-1 rounded text-xs">
+                  {/* Preview */}
+                  <Link to={`/components/${component.id}`} className="relative h-48 bg-white overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100" />
+                    {component.htmlCode && component.cssCode ? (
+                      <ComponentPreview
+                        htmlCode={component.htmlCode}
+                        cssCode={component.cssCode}
+                        jsCode={component.jsCode || undefined}
+                        name={component.name}
+                        height={192}
+                        lazy={true}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                        <Code2 className="w-12 h-12 text-gray-400" />
+                      </div>
+                    )}
+                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold">
                       {component.category}
                     </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
 
                   {/* Component Info */}
