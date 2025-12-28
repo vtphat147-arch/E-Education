@@ -50,8 +50,12 @@ const Profile = () => {
         bio: profileData.bio || '',
         avatarUrl: profileData.avatarUrl || ''
       })
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error loading profile data:', err)
+      // If viewHistory fails, still show other data
+      if (err.response?.status === 401) {
+        navigate('/login')
+      }
     } finally {
       setLoading(false)
     }
