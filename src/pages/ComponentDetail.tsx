@@ -10,7 +10,6 @@ import ComponentPreview from '../components/ComponentPreview'
 import Comments from '../components/Comments'
 import ShareDropdown from '../components/ShareDropdown'
 import ExportDropdown from '../components/ExportDropdown'
-import DarkModeToggle from '../components/DarkModeToggle'
 import FrameworkCodeGenerator from '../components/FrameworkCodeGenerator'
 
 const ComponentDetail = () => {

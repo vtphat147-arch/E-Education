@@ -12,7 +12,6 @@ const Header = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { user, isAuthenticated, logout } = useAuth()
-  const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
     // Check if header animation has already been shown in this session
