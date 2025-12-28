@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { userService } from '../services/userService'
 import ComponentPreview from '../components/ComponentPreview'
 import Comments from '../components/Comments'
+import ShareButtons from '../components/ShareButtons'
 
 const ComponentDetail = () => {
   const { id } = useParams<{ id: string }>()
