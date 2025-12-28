@@ -70,7 +70,7 @@ const Homepage3D = () => {
   }, [scrollProgress])
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen pt-20">
       <Header />
       
       {/* Scroll Progress Bar */}

@@ -42,11 +42,11 @@ const Homepage = () => {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white py-20">
+      <section className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white pt-32 pb-20">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -57,14 +57,20 @@ const Homepage = () => {
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
               UI/UX Design Components
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-primary-100">
+            <p className="text-xl md:text-2xl mb-8 text-white/90">
               Khám phá hàng nghìn mẫu thiết kế đẹp mắt - Headers, Footers, Sidebars, Layouts, Typography
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
-              <Link to="/components" className="btn-primary text-lg px-8 py-4">
+              <Link 
+                to="/components" 
+                className="px-8 py-4 bg-white text-indigo-600 rounded-xl font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+              >
                 Xem tất cả
               </Link>
-              <Link to="/components?category=header" className="btn-secondary text-lg px-8 py-4">
+              <Link 
+                to="/components?category=header" 
+                className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 rounded-xl font-semibold text-lg hover:bg-white/20 hover:scale-105 transition-all duration-300"
+              >
                 Bắt đầu với Headers
               </Link>
             </div>
@@ -92,7 +98,7 @@ const Homepage = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300"
+                  className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300"
                 >
                   {/* Category Header */}
                   <div className={`bg-gradient-to-r ${category.color} p-6 text-white`}>
@@ -112,9 +118,9 @@ const Homepage = () => {
                           to={`/components/${component.id}`}
                           className="block group"
                         >
-                          <div className="border border-gray-200 rounded-lg p-4 hover:border-primary-500 transition-colors">
+                          <div className="border border-gray-200 rounded-lg p-4 hover:border-indigo-500 hover:shadow-md transition-all duration-300">
                             <div className="flex items-start justify-between mb-2">
-                              <h4 className="font-semibold text-gray-900 group-hover:text-primary-600">
+                              <h4 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
                                 {component.name}
                               </h4>
                               <span className="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">
@@ -155,7 +161,7 @@ const Homepage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white/50 backdrop-blur-sm">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-8">
             <motion.div
@@ -164,10 +170,10 @@ const Homepage = () => {
               viewport={{ once: true }}
               className="text-center"
             >
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Code2 className="w-8 h-8 text-primary-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Code2 className="w-8 h-8 text-indigo-600" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Code Examples</h3>
+              <h3 className="text-xl font-bold mb-2 text-gray-900">Code Examples</h3>
               <p className="text-gray-600">
                 Xem và copy HTML, CSS, JavaScript code cho mọi component
               </p>
@@ -180,10 +186,10 @@ const Homepage = () => {
               transition={{ delay: 0.1 }}
               className="text-center"
             >
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Eye className="w-8 h-8 text-primary-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Eye className="w-8 h-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-bold mb-2">Live Preview</h3>
+              <h3 className="text-xl font-bold mb-2 text-gray-900">Live Preview</h3>
               <p className="text-gray-600">
                 Xem trước component trong thời gian thực với preview đẹp mắt
               </p>
@@ -196,8 +202,8 @@ const Homepage = () => {
               transition={{ delay: 0.2 }}
               className="text-center"
             >
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Grid className="w-8 h-8 text-primary-600" />
+              <div className="w-16 h-16 bg-gradient-to-br from-pink-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Grid className="w-8 h-8 text-pink-600" />
               </div>
               <h3 className="text-xl font-bold mb-2">Responsive Design</h3>
               <p className="text-gray-600">

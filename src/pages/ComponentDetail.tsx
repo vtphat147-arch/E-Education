@@ -109,7 +109,7 @@ const ComponentDetail = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Header />
       
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 pt-28 pb-8">
         {/* Back Button với glass effect */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
@@ -155,7 +155,7 @@ const ComponentDetail = () => {
                       {component.name}
                     </h1>
                     <div className="flex flex-wrap items-center gap-3 mb-6">
-                      <span className="px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-full text-sm font-semibold shadow-lg">
+                      <span className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full text-sm font-semibold shadow-lg">
                         {component.category}
                       </span>
                       <span className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-gray-200 text-gray-700 rounded-full text-sm font-medium">
@@ -221,7 +221,7 @@ const ComponentDetail = () => {
                   onClick={() => setActiveTab(tab)}
                   className={`flex-1 px-6 py-4 font-semibold transition-all duration-300 ${
                     activeTab === tab
-                      ? 'text-primary-600 border-b-3 border-primary-600 bg-white/50'
+                      ? 'text-indigo-600 border-b-3 border-indigo-600 bg-white/50'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-white/30'
                   }`}
                 >
@@ -316,7 +316,7 @@ const ComponentDetail = () => {
               </h2>
               <Link
                 to={`/components?category=${component.category}`}
-                className="text-primary-600 hover:text-primary-700 font-semibold flex items-center gap-2"
+                className="text-indigo-600 hover:text-indigo-700 font-semibold flex items-center gap-2 transition-colors"
               >
                 Xem tất cả <ArrowLeft className="w-4 h-4 rotate-180" />
               </Link>
@@ -350,7 +350,7 @@ const ComponentDetail = () => {
                       </div>
                     </div>
                     <div className="p-5">
-                      <h3 className="font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-primary-600 transition-colors">
+                      <h3 className="font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-indigo-600 transition-colors">
                         {related.name}
                       </h3>
                       <p className="text-sm text-gray-600 mb-3 line-clamp-2">{related.description}</p>

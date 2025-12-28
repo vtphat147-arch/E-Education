@@ -46,11 +46,11 @@ const Components = () => {
   }, [searchTerm, selectedCategory])
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 text-white py-16">
+      <section className="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white pt-32 pb-16">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -61,7 +61,7 @@ const Components = () => {
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Design Components Library
             </h2>
-            <p className="text-xl md:text-2xl mb-8 text-primary-100">
+            <p className="text-xl md:text-2xl mb-8 text-white/90">
               Tìm kiếm và khám phá hàng nghìn mẫu thiết kế đẹp mắt
             </p>
           </motion.div>
@@ -69,7 +69,7 @@ const Components = () => {
       </section>
 
       {/* Search and Filter Section */}
-      <section className="py-8 bg-white shadow-sm sticky top-[73px] z-40">
+      <section className="py-8 bg-white/80 backdrop-blur-xl shadow-lg border-b border-white/20 sticky top-20 z-40">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex gap-4 mb-4">
@@ -81,7 +81,7 @@ const Components = () => {
                   placeholder="Tìm kiếm component..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all duration-300 bg-white/50 backdrop-blur-sm"
                 />
               </div>
 
@@ -89,7 +89,7 @@ const Components = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none bg-white"
+                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white/50 backdrop-blur-sm transition-all duration-300"
               >
                 {categories.map((cat) => (
                   <option key={cat.value} value={cat.value}>
@@ -101,7 +101,7 @@ const Components = () => {
 
             {/* Results Count */}
             <div className="text-sm text-gray-600 text-center">
-              Tìm thấy <span className="font-semibold text-primary-600">{components.length}</span> components
+              Tìm thấy <span className="font-semibold text-indigo-600">{components.length}</span> components
             </div>
           </div>
         </div>
@@ -112,7 +112,7 @@ const Components = () => {
         <div className="container mx-auto px-4">
           {loading ? (
             <div className="text-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
               <p className="text-gray-600">Đang tải dữ liệu...</p>
             </div>
           ) : error ? (
@@ -135,7 +135,7 @@ const Components = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: index * 0.05 }}
-                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col"
+                  className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 flex flex-col"
                 >
                   {/* Preview Image */}
                   <Link to={`/components/${component.id}`} className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
@@ -155,7 +155,7 @@ const Components = () => {
                   {/* Component Info */}
                   <div className="p-5 flex flex-col flex-1">
                     <Link to={`/components/${component.id}`}>
-                      <h3 className="text-lg font-bold mb-2 line-clamp-2 text-gray-900 hover:text-primary-600">
+                      <h3 className="text-lg font-bold mb-2 line-clamp-2 text-gray-900 hover:text-indigo-600 transition-colors">
                         {component.name}
                       </h3>
                     </Link>
@@ -183,7 +183,7 @@ const Components = () => {
                         <span>{component.likes}</span>
                       </div>
                       {component.framework && (
-                        <span className="ml-auto text-xs px-2 py-1 bg-primary-100 text-primary-700 rounded">
+                        <span className="ml-auto text-xs px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full">
                           {component.framework}
                         </span>
                       )}
