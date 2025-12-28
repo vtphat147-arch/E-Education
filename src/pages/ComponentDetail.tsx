@@ -22,7 +22,6 @@ const ComponentDetail = () => {
   const [activeTab, setActiveTab] = useState<'html' | 'css' | 'js'>('html')
   const [copied, setCopied] = useState<string | null>(null)
   const [isFavorited, setIsFavorited] = useState(false)
-  const [isLiked, setIsLiked] = useState(false)
   const [isFullscreenPreview, setIsFullscreenPreview] = useState(false)
   const { isAuthenticated } = useAuth()
 
@@ -34,15 +33,11 @@ const ComponentDetail = () => {
         const data = await designService.getComponentById(parseInt(id))
         setComponent(data)
         
-        // Check if favorited and liked (if authenticated)
+        // Check if favorited (if authenticated)
         if (isAuthenticated && data.id) {
           try {
-            const [favorited, likedData] = await Promise.all([
-              userService.checkFavorite(data.id).catch(() => false),
-              designService.checkLike(data.id).catch(() => ({ isLiked: false }))
-            ])
+            const favorited = await userService.checkFavorite(data.id).catch(() => false)
             setIsFavorited(favorited)
-            setIsLiked(likedData.isLiked)
           } catch (err) {
             // Silent fail
           }
@@ -77,20 +72,38 @@ const ComponentDetail = () => {
   }, [id, isAuthenticated])
 
   const handleLike = async () => {
-    if (!id || !component || !isAuthenticated) {
-      navigate('/login')
+    if (!id || !component) {
+      if (!isAuthenticated) {
+        navigate('/login')
+        return
+      }
       return
     }
     try {
-      const result = await designService.likeComponent(parseInt(id))
-      setComponent({ ...component, likes: result.likes })
-      setIsLiked(result.isLiked)
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        navigate('/login')
+      // Always increment likes locally for immediate feedback
+      const newLikes = (component.likes || 0) + 1
+      setComponent({ ...component, likes: newLikes })
+      
+      // Call API in background (don't wait for response)
+      if (isAuthenticated) {
+        designService.likeComponent(parseInt(id)).then((result) => {
+          // Update with server response
+          setComponent(prev => prev ? { ...prev, likes: result.likes } : null)
+        }).catch((err: any) => {
+          if (err.response?.status === 401) {
+            navigate('/login')
+          } else {
+            console.error('Error liking component:', err)
+            // Revert on error
+            setComponent(prev => prev ? { ...prev, likes: (prev.likes || 1) - 1 } : null)
+          }
+        })
       } else {
-        console.error('Error liking component:', err)
+        // Not authenticated, just show increment
+        navigate('/login')
       }
+    } catch (err: any) {
+      console.error('Error in handleLike:', err)
     }
   }
 
@@ -230,13 +243,9 @@ const ComponentDetail = () => {
                 onClick={handleLike}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors ${
-                  isLiked 
-                    ? 'bg-red-100 hover:bg-red-200 text-red-700' 
-                    : 'bg-red-50 hover:bg-red-100 text-red-600'
-                }`}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors bg-red-50 hover:bg-red-100 text-red-600"
               >
-                <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-600' : ''}`} />
+                <Heart className="w-5 h-5 fill-red-600" />
                 <span>{component.likes}</span>
               </motion.button>
               <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl text-blue-600 font-semibold">
@@ -302,18 +311,14 @@ const ComponentDetail = () => {
                   onClick={handleLike}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors ${
-                    isLiked 
-                      ? 'bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-700 dark:text-red-400' 
-                      : 'bg-white dark:bg-gray-800 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 border border-gray-200 dark:border-gray-700'
-                  }`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors bg-white hover:bg-red-50 text-red-600 border border-gray-200"
                 >
-                  <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-600 dark:fill-red-400' : ''}`} />
+                  <Heart className="w-5 h-5 fill-red-600" />
                   <span>{component.likes}</span>
                 </motion.button>
 
                 {/* View Count */}
-                <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-xl text-blue-600 dark:text-blue-400 font-semibold border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl text-blue-600 font-semibold border border-gray-200">
                   <Eye className="w-5 h-5" />
                   <span>{component.views}</span>
                 </div>
