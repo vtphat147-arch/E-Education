@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Code2, Menu, X, Sparkles, User, LogOut } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import ThemeSelector from '../components/ThemeSelector'
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -45,7 +44,7 @@ const Header = () => {
       initial={shouldAnimate ? { y: -100, opacity: 0 } : { y: 0, opacity: 1 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-md border-b border-gray-200/50 dark:border-gray-700/50"
+      className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl shadow-md border-b border-gray-200/50"
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
@@ -65,10 +64,10 @@ const Header = () => {
               </div>
             </motion.div>
             <div className="flex flex-col">
-              <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
+              <span className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                 UI Components
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Design Library</span>
+              <span className="text-xs text-gray-500 hidden sm:block">Design Library</span>
             </div>
           </Link>
 
@@ -85,8 +84,8 @@ const Header = () => {
                   <span
                     className={`relative transition-colors duration-300 ${
                       active
-                        ? 'text-indigo-600 dark:text-indigo-400'
-                        : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400'
+                        ? 'text-indigo-600'
+                        : 'text-gray-700 hover:text-indigo-600'
                     }`}
                   >
                     {item.label}
@@ -104,7 +103,6 @@ const Header = () => {
 
           {/* CTA Button / User Menu */}
           <div className="hidden md:flex items-center space-x-4">
-            <ThemeSelector />
             {isAuthenticated ? (
               <div className="relative">
                 <button
@@ -114,17 +112,17 @@ const Header = () => {
                   <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
                     {user?.username?.[0].toUpperCase() || 'U'}
                   </div>
-                  <span className="text-gray-700 dark:text-gray-300">{user?.username}</span>
+                  <span className="text-gray-700">{user?.username}</span>
                 </button>
                 {showUserMenu && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50"
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50"
                   >
                     <Link
                       to="/profile"
-                      className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
+                      className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-50"
                       onClick={() => setShowUserMenu(false)}
                     >
                       <User className="w-4 h-4" />
@@ -136,7 +134,7 @@ const Header = () => {
                         setShowUserMenu(false)
                         navigate('/')
                       }}
-                      className="w-full text-left px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                     >
                       <LogOut className="w-4 h-4" />
                       Đăng xuất
@@ -148,7 +146,7 @@ const Header = () => {
               <>
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium transition-colors"
+                  className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium transition-colors"
                 >
                   Đăng nhập
                 </Link>
@@ -174,7 +172,7 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
             aria-label="Toggle menu"
           >
             {isMobileMenuOpen ? (
@@ -194,7 +192,7 @@ const Header = () => {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden overflow-hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200/50 dark:border-gray-700/50"
+            className="md:hidden overflow-hidden bg-white/95 backdrop-blur-xl border-t border-gray-200/50"
           >
             <nav className="container mx-auto px-4 py-4 space-y-2">
               {navItems.map((item, index) => (
@@ -217,14 +215,6 @@ const Header = () => {
                   </Link>
                 </motion.div>
               ))}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: (navItems.length - 1) * 0.1 }}
-                className="px-4 py-2"
-              >
-                <ThemeSelector />
-              </motion.div>
               {isAuthenticated ? (
                 <>
                   <motion.div

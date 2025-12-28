@@ -30,7 +30,7 @@ const Toast = ({ message, isOpen, onClose, duration = 3000 }: ToastProps) => {
           transition={{ duration: 0.3, type: 'spring', stiffness: 300, damping: 25 }}
           className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[10000] pointer-events-none"
         >
-          <div className="bg-gray-900 dark:bg-gray-800 text-white px-6 py-4 rounded-xl shadow-2xl border border-gray-700 dark:border-gray-600 flex items-center gap-4 min-w-[300px] max-w-[500px] pointer-events-auto">
+          <div className="bg-gray-900 text-white px-6 py-4 rounded-xl shadow-2xl border border-gray-700 flex items-center gap-4 min-w-[300px] max-w-[500px] pointer-events-auto">
             <div className="flex-1">
               <p className="font-semibold text-lg">{message}</p>
             </div>
@@ -38,7 +38,7 @@ const Toast = ({ message, isOpen, onClose, duration = 3000 }: ToastProps) => {
               onClick={onClose}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="p-1 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors"
+              className="p-1 rounded-lg hover:bg-gray-700 transition-colors"
               aria-label="Close"
             >
               <X className="w-5 h-5" />
