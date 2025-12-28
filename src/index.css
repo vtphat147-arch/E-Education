@@ -60,8 +60,17 @@ canvas {
   
   /* Fix text clipping với descenders */
   h1, h2, h3, h4, h5, h6 {
-    line-height: 1.2;
-    padding-bottom: 0.2em;
+    line-height: 1.15 !important;
+    padding-bottom: 0.5rem !important;
+    overflow: visible !important;
+  }
+  
+  /* Đặc biệt cho gradient text */
+  [class*="bg-clip-text"] {
+    padding-bottom: 0.5rem !important;
+    line-height: 1.15 !important;
+    display: inline-block;
+    overflow: visible !important;
   }
   
   p {

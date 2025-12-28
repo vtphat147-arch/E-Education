@@ -38,7 +38,7 @@ export const Showcase = ({ components = [] }: ShowcaseProps) => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16 px-4"
         >
-          <h2 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent leading-tight pb-2">
+          <h2 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent leading-tight pb-4" style={{ paddingBottom: '0.5rem', lineHeight: '1.15' }}>
             Showcase
           </h2>
           <p className="text-xl md:text-2xl text-white/70 max-w-2xl mx-auto leading-relaxed">

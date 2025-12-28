@@ -40,8 +40,10 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl sm:text-7xl md:text-9xl font-black mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-tight pb-2"
+            className="text-5xl sm:text-7xl md:text-9xl font-black mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-tight pb-4"
             style={{
+              paddingBottom: '0.5rem',
+              lineHeight: '1.15',
               textShadow: '0 0 80px rgba(102, 126, 234, 0.5)',
               filter: 'drop-shadow(0 0 30px rgba(139, 92, 246, 0.3))'
             }}
