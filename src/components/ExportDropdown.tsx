@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Download, FileText, Code, FileCode, Archive, Copy, Check } from 'lucide-react'
+import { Download, FileText, Code, FileCode, Archive, Copy, Check, ChevronDown } from 'lucide-react'
 import { DesignComponent } from '../services/api'
 
 interface ExportDropdownProps {
@@ -163,78 +163,92 @@ ${component.jsCode}
       name: 'Download HTML',
       icon: FileText,
       onClick: downloadHTML,
-      color: 'text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+      color: 'text-blue-600 dark:text-blue-400'
     },
     {
       name: 'Download CSS',
       icon: Code,
       onClick: downloadCSS,
-      color: 'text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20'
+      color: 'text-purple-600 dark:text-purple-400'
     },
     {
       name: 'Download JS',
       icon: FileCode,
       onClick: downloadJS,
-      color: 'text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20',
+      color: 'text-yellow-600 dark:text-yellow-400',
       disabled: !component.jsCode
     },
     {
       name: 'Download ZIP',
       icon: Archive,
       onClick: downloadZIP,
-      color: 'text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'
+      color: 'text-green-600 dark:text-green-400'
     },
     {
       name: copied === 'all' ? 'Copied!' : 'Copy All Code',
       icon: copied === 'all' ? Check : Copy,
       onClick: copyAllCode,
-      color: 'text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
+      color: 'text-gray-600 dark:text-gray-400'
     }
   ]
 
   return (
     <div className="relative" ref={dropdownRef}>
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg flex items-center justify-center transition-all"
-        aria-label="Export component"
+        className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+          isOpen
+            ? 'bg-indigo-600 text-white shadow-lg'
+            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
+        }`}
       >
         <Download className="w-5 h-5" />
+        <span className="hidden sm:inline">Export</span>
+        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute right-0 top-14 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
-          >
-            <div className="p-2">
-              {exportOptions.map((option, index) => {
-                const Icon = option.icon
-                return (
-                  <motion.button
-                    key={option.name}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={option.onClick}
-                    disabled={option.disabled}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
-                      option.disabled ? 'opacity-50 cursor-not-allowed' : option.color
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{option.name}</span>
-                  </motion.button>
-                )
-              })}
-            </div>
-          </motion.div>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40"
+              onClick={() => setIsOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="absolute left-0 top-full mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+            >
+              <div className="p-2">
+                {exportOptions.map((option, index) => {
+                  const Icon = option.icon
+                  return (
+                    <motion.button
+                      key={option.name}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                      onClick={option.onClick}
+                      disabled={option.disabled}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all hover:bg-gray-50 dark:hover:bg-gray-700 ${
+                        option.disabled ? 'opacity-50 cursor-not-allowed' : option.color
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span>{option.name}</span>
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
@@ -242,4 +256,3 @@ ${component.jsCode}
 }
 
 export default ExportDropdown
-
