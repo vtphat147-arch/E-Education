@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Eye, Heart, Copy, Check, ExternalLink, Sparkles, Code2 } from 'lucide-react'
+import { ArrowLeft, Eye, Heart, Copy, Check, ExternalLink, Sparkles, Code2, Sun, Moon } from 'lucide-react'
 import Header from '../cpnents/Header'
 import { designService, DesignComponent } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
@@ -9,6 +9,9 @@ import { userService } from '../services/userService'
 import ComponentPreview from '../components/ComponentPreview'
 import Comments from '../components/Comments'
 import ShareButtons from '../components/ShareButtons'
+import ExportComponent from '../components/ExportComponent'
+import DarkModeToggle from '../components/DarkModeToggle'
+import FrameworkCodeGenerator from '../components/FrameworkCodeGenerator'
 
 const ComponentDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -20,6 +23,7 @@ const ComponentDetail = () => {
   const [copied, setCopied] = useState<string | null>(null)
   const [isFavorited, setIsFavorited] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false)
   const { isAuthenticated } = useAuth()
 
   useEffect(() => {
@@ -261,7 +265,14 @@ const ComponentDetail = () => {
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
                   <h3 className="ml-3 text-lg font-bold text-gray-900">Live Preview</h3>
                 </div>
-                <ExternalLink className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <Sun className="w-4 h-4 text-gray-500" />
+                    <DarkModeToggle onToggle={setIsDarkMode} />
+                    <Moon className="w-4 h-4 text-gray-500" />
+                  </div>
+                  <ExternalLink className="w-4 h-4 text-gray-400" />
+                </div>
               </div>
               <div className="p-6 bg-gradient-to-br from-gray-100 via-gray-50 to-white flex-1 flex flex-col">
                 <iframe
@@ -376,6 +387,30 @@ const ComponentDetail = () => {
             </div>
           </motion.div>
         </div>
+
+        {/* Export Component Section */}
+        {component && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-8"
+          >
+            <ExportComponent component={component} />
+          </motion.div>
+        )}
+
+        {/* Framework Code Generator Section */}
+        {component && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.22 }}
+            className="mt-8"
+          >
+            <FrameworkCodeGenerator component={component} />
+          </motion.div>
+        )}
 
         {/* Share Buttons Section */}
         {component && (

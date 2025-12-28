@@ -9,6 +9,7 @@ import Register from './pages/Register'
 import Profile from './pages/Profile'
 import VerifyEmail from './pages/VerifyEmail'
 import RegisterSuccess from './pages/RegisterSuccess'
+import ComponentEditorPage from './pages/ComponentEditorPage'
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/register-success" element={<RegisterSuccess />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/editor" element={<ComponentEditorPage />} />
         </Routes>
       </Router>
     </AuthProvider>
