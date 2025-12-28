@@ -14,7 +14,7 @@ const ComponentPreview = ({
   cssCode, 
   jsCode = '', 
   name,
-  height = 192,
+  height: _height = 192,
   lazy = true
 }: ComponentPreviewProps) => {
   const [loadError, setLoadError] = useState(false)
@@ -77,7 +77,7 @@ const ComponentPreview = ({
 
   if (loadError) {
     return (
-      <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
         <div className="text-center p-4">
           <p className="text-gray-500 text-sm">Preview không khả dụng</p>
         </div>
@@ -89,8 +89,7 @@ const ComponentPreview = ({
     return (
       <div 
         ref={iframeRef as any}
-        className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"
-        style={{ height: `${height}px` }}
+        className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center"
       >
         <div className="animate-pulse text-gray-400 text-sm">Loading...</div>
       </div>
@@ -98,13 +97,16 @@ const ComponentPreview = ({
   }
 
   return (
-    <div className="w-full h-full relative" style={{ height: `${height}px` }}>
+    <div className="w-full h-full relative bg-white overflow-hidden">
       <iframe
         ref={iframeRef}
         srcDoc={previewDoc}
         title={`Preview ${name}`}
-        className="w-full h-full border-0"
-        style={{ height: `${height}px` }}
+        className="absolute inset-0 w-full h-full border-0 pointer-events-none"
+        style={{ 
+          transform: 'scale(1)',
+          transformOrigin: 'top left'
+        }}
         sandbox="allow-scripts allow-same-origin"
         loading="lazy"
         onError={() => setLoadError(true)}

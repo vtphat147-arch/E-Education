@@ -139,26 +139,27 @@ const Components = () => {
                   className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 flex flex-col"
                 >
                   {/* Preview */}
-                  <Link to={`/components/${component.id}`} className="relative h-48 bg-white overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100" />
-                    {component.htmlCode && component.cssCode ? (
-                      <ComponentPreview
-                        htmlCode={component.htmlCode}
-                        cssCode={component.cssCode}
-                        jsCode={component.jsCode || undefined}
-                        name={component.name}
-                        height={192}
-                        lazy={true}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                        <Code2 className="w-12 h-12 text-gray-400" />
+                  <Link to={`/components/${component.id}`} className="relative bg-white overflow-hidden group block">
+                    <div className="relative w-full aspect-video bg-gradient-to-br from-gray-50 to-gray-100">
+                      {component.htmlCode && component.cssCode ? (
+                        <ComponentPreview
+                          htmlCode={component.htmlCode}
+                          cssCode={component.cssCode}
+                          jsCode={component.jsCode || undefined}
+                          name={component.name}
+                          height={192}
+                          lazy={true}
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                          <Code2 className="w-12 h-12 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
+                        {component.category}
                       </div>
-                    )}
-                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold">
-                      {component.category}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10" />
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
 
                   {/* Component Info */}

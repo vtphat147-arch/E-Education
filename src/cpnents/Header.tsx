@@ -74,25 +74,23 @@ const Header = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="relative px-4 py-2 rounded-lg transition-all duration-300"
+                  className="relative px-4 py-2 font-medium transition-all duration-300 group"
                 >
-                  {active && (
-                    <motion.div
-                      layoutId="headerActiveTab"
-                      className="absolute inset-0 bg-indigo-50 rounded-lg"
-                      initial={false}
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
                   <span
-                    className={`relative z-10 font-medium transition-colors duration-300 ${
+                    className={`relative transition-colors duration-300 ${
                       active
                         ? 'text-indigo-600'
-                        : 'text-gray-700 hover:text-gray-900'
+                        : 'text-gray-700 hover:text-indigo-600'
                     }`}
                   >
                     {item.label}
                   </span>
+                  {/* Active underline */}
+                  <span
+                    className={`absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-indigo-600 to-purple-600 transition-all duration-300 ${
+                      active ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0 group-hover:opacity-50 group-hover:scale-x-100'
+                    }`}
+                  />
                 </Link>
               )
             })}
