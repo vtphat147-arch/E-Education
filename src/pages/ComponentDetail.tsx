@@ -9,7 +9,7 @@ import { userService } from '../services/userService'
 import ComponentPreview from '../components/ComponentPreview'
 import Comments from '../components/Comments'
 import ShareButtons from '../components/ShareButtons'
-import ExportComponent from '../components/ExportComponent'
+import ExportDropdown from '../components/ExportDropdown'
 import DarkModeToggle from '../components/DarkModeToggle'
 import FrameworkCodeGenerator from '../components/FrameworkCodeGenerator'
 

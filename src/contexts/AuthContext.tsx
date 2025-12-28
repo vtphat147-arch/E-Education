@@ -20,14 +20,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // Check if user is already logged in
-    const token = authService.getToken()
-    if (token) {
-      // Token exists, try to get user info (we'll implement this later)
-      // For now, just set loading to false
-      setLoading(false)
-    } else {
+    const loadUser = async () => {
+      const token = authService.getToken()
+      if (token) {
+        try {
+          // Try to get user profile to verify token
+          const { userService } = await import('../services/userService')
+          const profile = await userService.getProfile()
+          setUser({
+            id: profile.id,
+            email: profile.email,
+            username: profile.username,
+            fullName: profile.fullName,
+            avatarUrl: profile.avatarUrl,
+            bio: profile.bio,
+            isAdmin: profile.isAdmin
+          })
+        } catch (error) {
+          // Token is invalid, remove it
+          authService.removeToken()
+        }
+      }
       setLoading(false)
     }
+    
+    loadUser()
   }, [])
 
   const login = async (data: LoginData) => {

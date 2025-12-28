@@ -12,7 +12,7 @@ type Framework = 'react' | 'vue' | 'angular'
 const FrameworkCodeGenerator = ({ component }: FrameworkCodeGeneratorProps) => {
   const [selectedFramework, setSelectedFramework] = useState<Framework>('react')
   const [copied, setCopied] = useState<string | null>(null)
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true)
 
 
   const convertHtmlToJsx = (html: string): string => {

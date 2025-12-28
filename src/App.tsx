@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 import Homepage from './pages/Homepage'
 import Homepage3D from './pages/Homepage3D'
 import Components from './pages/Components'
@@ -13,8 +14,9 @@ import ComponentEditorPage from './pages/ComponentEditorPage'
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
         <Routes>
           <Route path="/" element={<Homepage3D />} />
           <Route path="/classic" element={<Homepage />} />
@@ -28,7 +30,8 @@ function App() {
           <Route path="/editor" element={<ComponentEditorPage />} />
         </Routes>
       </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 
