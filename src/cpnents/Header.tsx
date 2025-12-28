@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Code2, Menu, X, Sparkles, User, LogOut } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import ThemeSelector from '../components/ThemeSelector'
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -103,6 +104,7 @@ const Header = () => {
 
           {/* CTA Button / User Menu */}
           <div className="hidden md:flex items-center space-x-4">
+            <ThemeSelector />
             {isAuthenticated ? (
               <div className="relative">
                 <button
@@ -122,7 +124,7 @@ const Header = () => {
                   >
                     <Link
                       to="/profile"
-                      className="block px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                      className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
                       onClick={() => setShowUserMenu(false)}
                     >
                       <User className="w-4 h-4" />
@@ -215,6 +217,14 @@ const Header = () => {
                   </Link>
                 </motion.div>
               ))}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: (navItems.length - 1) * 0.1 }}
+                className="px-4 py-2"
+              >
+                <ThemeSelector />
+              </motion.div>
               {isAuthenticated ? (
                 <>
                   <motion.div

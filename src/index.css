@@ -23,7 +23,63 @@ html.lenis {
   pointer-events: none;
 }
 
-/* Custom Scrollbar */
+/* Theme CSS Variables */
+:root {
+  --theme-primary: #4F46E5;
+  --theme-secondary: #6366F1;
+  --theme-accent: #818CF8;
+}
+
+/* Theme-specific colors */
+.theme-indigo {
+  --theme-primary: #4F46E5;
+  --theme-secondary: #6366F1;
+  --theme-accent: #818CF8;
+}
+
+.theme-blue {
+  --theme-primary: #2563EB;
+  --theme-secondary: #3B82F6;
+  --theme-accent: #60A5FA;
+}
+
+.theme-purple {
+  --theme-primary: #9333EA;
+  --theme-secondary: #A855F7;
+  --theme-accent: #C084FC;
+}
+
+.theme-green {
+  --theme-primary: #059669;
+  --theme-secondary: #10B981;
+  --theme-accent: #34D399;
+}
+
+.theme-pink {
+  --theme-primary: #DB2777;
+  --theme-secondary: #EC4899;
+  --theme-accent: #F472B6;
+}
+
+.theme-orange {
+  --theme-primary: #EA580C;
+  --theme-secondary: #F97316;
+  --theme-accent: #FB923C;
+}
+
+.theme-teal {
+  --theme-primary: #0D9488;
+  --theme-secondary: #14B8A6;
+  --theme-accent: #5EEAD4;
+}
+
+.theme-red {
+  --theme-primary: #DC2626;
+  --theme-secondary: #EF4444;
+  --theme-accent: #F87171;
+}
+
+/* Custom Scrollbar with theme colors */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -33,12 +89,12 @@ html.lenis {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #6366f1, #8b5cf6);
+  background: linear-gradient(180deg, var(--theme-secondary), var(--theme-accent));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #8b5cf6, #d946ef);
+  background: linear-gradient(180deg, var(--theme-accent), var(--theme-primary));
 }
 
 /* Performance optimizations */
