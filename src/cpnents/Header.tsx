@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Code2, Menu, X, Sparkles } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { Code2, Menu, X, Sparkles, User, LogOut } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [shouldAnimate, setShouldAnimate] = useState(false)
+  const [showUserMenu, setShowUserMenu] = useState(false)
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, isAuthenticated, logout } = useAuth()
 
   useEffect(() => {
     // Check if header animation has already been shown in this session
@@ -97,23 +101,72 @@ const Header = () => {
             })}
           </nav>
 
-          {/* CTA Button */}
+          {/* CTA Button / User Menu */}
           <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/components"
-              className="group relative px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/50"
-            >
-              <span className="relative z-10 flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                Get Started
-              </span>
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600"
-                initial={{ x: '-100%' }}
-                whileHover={{ x: 0 }}
-                transition={{ duration: 0.3 }}
-              />
-            </Link>
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 hover:bg-gray-100"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                    {user?.username?.[0].toUpperCase() || 'U'}
+                  </div>
+                  <span className="text-gray-700">{user?.username}</span>
+                </button>
+                {showUserMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50"
+                  >
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                      onClick={() => setShowUserMenu(false)}
+                    >
+                      <User className="w-4 h-4" />
+                      Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout()
+                        setShowUserMenu(false)
+                        navigate('/')
+                      }}
+                      className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Đăng xuất
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                >
+                  Đăng nhập
+                </Link>
+                <Link
+                  to="/components"
+                  className="group relative px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/50"
+                >
+                  <span className="relative z-10 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" />
+                    Get Started
+                  </span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -162,20 +215,56 @@ const Header = () => {
                   </Link>
                 </motion.div>
               ))}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navItems.length * 0.1 }}
-                className="pt-4"
-              >
-                <Link
-                  to="/components"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block w-full text-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold"
+              {isAuthenticated ? (
+                <>
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: navItems.length * 0.1 }}
+                    className="pt-4 space-y-2"
+                  >
+                    <Link
+                      to="/profile"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="block px-4 py-3 rounded-lg font-medium bg-gray-50 text-gray-700"
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout()
+                        setIsMobileMenuOpen(false)
+                        navigate('/')
+                      }}
+                      className="block w-full px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-gray-50"
+                    >
+                      Đăng xuất
+                    </button>
+                  </motion.div>
+                </>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: navItems.length * 0.1 }}
+                  className="pt-4 space-y-2"
                 >
-                  Get Started
-                </Link>
-              </motion.div>
+                  <Link
+                    to="/login"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block px-4 py-3 rounded-lg font-medium text-gray-700 hover:bg-gray-50"
+                  >
+                    Đăng nhập
+                  </Link>
+                  <Link
+                    to="/components"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block w-full text-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold"
+                  >
+                    Get Started
+                  </Link>
+                </motion.div>
+              )}
             </nav>
           </motion.div>
         )}
