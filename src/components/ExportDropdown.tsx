@@ -11,22 +11,60 @@ interface ExportDropdownProps {
 const ExportDropdown = ({ component }: ExportDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 })
   const dropdownRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
+  // Calculate dropdown position when opened
   useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect()
+      setDropdownPosition({
+        left: rect.left,
+        top: rect.bottom + 8
+      })
+    }
+  }, [isOpen])
+
+  // Handle click outside and update position on scroll/resize
+  useEffect(() => {
+    if (!isOpen) return
+
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node
+      if (buttonRef.current && !buttonRef.current.contains(target)) {
         setIsOpen(false)
       }
     }
 
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
+    const handleScroll = () => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect()
+        setDropdownPosition({
+          left: rect.left,
+          top: rect.bottom + 8
+        })
+      }
     }
+
+    const handleResize = () => {
+      if (buttonRef.current) {
+        const rect = buttonRef.current.getBoundingClientRect()
+        setDropdownPosition({
+          left: rect.left,
+          top: rect.bottom + 8
+        })
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    window.addEventListener('scroll', handleScroll, true)
+    window.addEventListener('resize', handleResize)
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('scroll', handleScroll, true)
+      window.removeEventListener('resize', handleResize)
     }
   }, [isOpen])
 
@@ -212,15 +250,16 @@ ${component.jsCode}
         <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </motion.button>
 
-      <AnimatePresence>
-        {isOpen && buttonRef.current && typeof window !== 'undefined' && createPortal(
+      {isOpen && typeof window !== 'undefined' && createPortal(
+        <AnimatePresence>
           <>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[9998]"
+              className="fixed inset-0 z-[9998] bg-transparent"
               onClick={() => setIsOpen(false)}
+              style={{ pointerEvents: 'auto' }}
             />
             <motion.div
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -229,11 +268,13 @@ ${component.jsCode}
               transition={{ duration: 0.2 }}
               style={{
                 position: 'fixed',
-                left: buttonRef.current.getBoundingClientRect().left,
-                top: buttonRef.current.getBoundingClientRect().bottom + 8,
-                zIndex: 9999
+                left: `${dropdownPosition.left}px`,
+                top: `${dropdownPosition.top}px`,
+                zIndex: 9999,
+                pointerEvents: 'auto'
               }}
               className="w-56 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="p-2">
                 {exportOptions.map((option, index) => {
@@ -257,10 +298,10 @@ ${component.jsCode}
                 })}
               </div>
             </motion.div>
-          </>,
-          document.body
-        )}
-      </AnimatePresence>
+          </>
+        </AnimatePresence>,
+        document.body
+      )}
     </div>
   )
 }
