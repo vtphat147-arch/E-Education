@@ -44,7 +44,7 @@ const GoogleLoginButton = ({
     
     script.onload = () => {
       if (window.google && buttonRef.current) {
-        const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '229481630120-2s68227dgigonrf6k8jg0l93jupfpfiu.apps.googleusercontent.com'
+        const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '1093420935022-fir4sj8alp1han53qe6tdailmel475bg.apps.googleusercontent.com'
         
         window.google.accounts.id.initialize({
           client_id: clientId,
