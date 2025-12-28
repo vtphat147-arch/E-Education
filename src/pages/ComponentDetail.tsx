@@ -23,6 +23,7 @@ const ComponentDetail = () => {
   const [copied, setCopied] = useState<string | null>(null)
   const [isFavorited, setIsFavorited] = useState(false)
   const [isFullscreenPreview, setIsFullscreenPreview] = useState(false)
+  const [flyingHearts, setFlyingHearts] = useState<Array<{ id: number; x: number; y: number }>>([])
   const { isAuthenticated } = useAuth()
 
   useEffect(() => {
@@ -71,10 +72,24 @@ const ComponentDetail = () => {
     fetchComponent()
   }, [id, isAuthenticated])
 
-  const handleLike = async () => {
+  const handleLike = async (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!id || !component) {
       return
     }
+    
+    // Get button position for heart animation
+    const rect = event.currentTarget.getBoundingClientRect()
+    const x = rect.left + rect.width / 2
+    const y = rect.top + rect.height / 2
+    
+    // Add flying heart animation
+    const heartId = Date.now()
+    setFlyingHearts(prev => [...prev, { id: heartId, x, y }])
+    
+    // Remove heart after animation
+    setTimeout(() => {
+      setFlyingHearts(prev => prev.filter(h => h.id !== heartId))
+    }, 2000)
     
     try {
       // Always increment likes locally for immediate feedback
@@ -84,20 +99,20 @@ const ComponentDetail = () => {
       // Call API in background (don't wait for response) - only if authenticated
       if (isAuthenticated) {
         designService.likeComponent(parseInt(id)).then((result) => {
-          // Update with server response
-          setComponent(prev => prev ? { ...prev, likes: result.likes } : null)
+          // Update with server response only if it's higher (prevent race conditions)
+          setComponent(prev => {
+            if (!prev) return null
+            return { ...prev, likes: Math.max(prev.likes, result.likes) }
+          })
         }).catch((err: any) => {
-          // Silent fail - don't redirect or show error
-          // Just revert the local increment if API fails
+          // Silent fail - don't revert, just log error
           console.error('Error liking component:', err)
-          setComponent(prev => prev ? { ...prev, likes: Math.max(0, (prev.likes || 1) - 1) } : null)
         })
       }
       // If not authenticated, just show the increment locally (no API call, no redirect)
     } catch (err: any) {
       console.error('Error in handleLike:', err)
-      // Revert on error
-      setComponent(prev => prev ? { ...prev, likes: Math.max(0, (prev.likes || 1) - 1) } : null)
+      // Don't revert - keep the increment
     }
   }
 
@@ -299,13 +314,40 @@ const ComponentDetail = () => {
                 />
               </div>
               {/* Action buttons below preview */}
-              <div className="p-4 bg-gray-50/50 dark:bg-gray-800/50 border-t border-gray-200/50 dark:border-gray-700/50 flex items-center justify-center gap-3 flex-wrap flex-shrink-0">
+              <div className="p-4 bg-gray-50/50 border-t border-gray-200/50 flex items-center justify-center gap-3 flex-wrap flex-shrink-0 relative">
+                {/* Flying Hearts Animation */}
+                {flyingHearts.map((heart) => (
+                  <motion.div
+                    key={heart.id}
+                    initial={{ 
+                      x: heart.x - 20, 
+                      y: heart.y - 20, 
+                      scale: 1,
+                      opacity: 1 
+                    }}
+                    animate={{ 
+                      y: heart.y - 100,
+                      x: heart.x + (Math.random() * 40 - 20),
+                      scale: [1, 1.5, 0],
+                      opacity: [1, 1, 0],
+                      rotate: [0, Math.random() * 360 - 180]
+                    }}
+                    transition={{ 
+                      duration: 1.5,
+                      ease: "easeOut"
+                    }}
+                    className="fixed pointer-events-none z-50"
+                    style={{ left: heart.x, top: heart.y }}
+                  >
+                    <Heart className="w-6 h-6 fill-red-500 text-red-500" />
+                  </motion.div>
+                ))}
                 {/* Like Button */}
                 <motion.button
                   onClick={handleLike}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.9 }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors bg-white hover:bg-red-50 text-red-600 border border-gray-200"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-colors bg-white hover:bg-red-50 text-red-600 border border-gray-200 relative z-10"
                 >
                   <Heart className="w-5 h-5 fill-red-600" />
                   <span>{component.likes}</span>
