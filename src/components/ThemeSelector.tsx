@@ -1,13 +1,17 @@
 import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Palette, Check, ChevronDown } from 'lucide-react'
-import { useTheme, ColorTheme, colorThemes } from '../contexts/ThemeContext'
+import { useTheme, ColorTheme } from '../contexts/ThemeContext'
+import { useThemeClasses } from '../hooks/useThemeClasses'
 
 const ThemeSelector = () => {
   const { colorTheme, modeTheme, setColorTheme, toggleMode } = useTheme()
+  const themeClasses = useThemeClasses()
   const [isOpen, setIsOpen] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 })
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const themes: { name: string; value: ColorTheme; primaryColor: string }[] = [
     { name: 'Indigo', value: 'indigo', primaryColor: '#4F46E5' },
@@ -35,7 +39,12 @@ const ThemeSelector = () => {
 
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node
-      if (buttonRef.current && !buttonRef.current.contains(target)) {
+      if (
+        buttonRef.current && 
+        !buttonRef.current.contains(target) &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target)
+      ) {
         setIsOpen(false)
       }
     }
@@ -62,7 +71,7 @@ const ThemeSelector = () => {
   }, [isOpen])
 
   return (
-    <div className="relative" ref={buttonRef}>
+    <div className="relative" ref={containerRef}>
       <motion.button
         ref={buttonRef}
         whileHover={{ scale: 1.05 }}
@@ -70,7 +79,7 @@ const ThemeSelector = () => {
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium transition-all duration-300 ${
           isOpen
-            ? 'bg-indigo-600 text-white shadow-lg'
+            ? `${themeClasses.bg} text-white shadow-lg`
             : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
         }`}
         title="Theme Selector"
@@ -82,6 +91,7 @@ const ThemeSelector = () => {
 
       {isOpen && typeof window !== 'undefined' && (
         <motion.div
+          ref={dropdownRef}
           initial={{ opacity: 0, y: -10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -103,7 +113,7 @@ const ThemeSelector = () => {
               <motion.button
                 onClick={toggleMode}
                 className={`relative w-12 h-6 rounded-full transition-colors ${
-                  modeTheme === 'dark' ? 'bg-indigo-600' : 'bg-gray-300'
+                  modeTheme === 'dark' ? themeClasses.bg : 'bg-gray-300'
                 }`}
               >
                 <motion.div
@@ -129,7 +139,7 @@ const ThemeSelector = () => {
                 }}
                 className={`w-full flex items-center justify-between px-4 py-3 rounded-lg font-medium transition-all hover:bg-gray-50 dark:hover:bg-gray-700 ${
                   colorTheme === theme.value
-                    ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400'
+                    ? `${themeClasses.hover} ${themeClasses.text} bg-opacity-50 dark:bg-opacity-30`
                     : 'text-gray-700 dark:text-gray-300'
                 }`}
               >
