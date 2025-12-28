@@ -411,7 +411,7 @@ const ComponentDetail = () => {
             transition={{ delay: 0.2 }}
             className="mt-8"
           >
-            <ExportComponent component={component} />
+            <ExportDropdown component={component} />
           </motion.div>
         )}
 
