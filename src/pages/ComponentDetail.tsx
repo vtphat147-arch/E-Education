@@ -7,6 +7,7 @@ import { designService, DesignComponent } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
 import { userService } from '../services/userService'
 import ComponentPreview from '../components/ComponentPreview'
+import Comments from '../components/Comments'
 
 const ComponentDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -353,6 +354,18 @@ const ComponentDetail = () => {
             </div>
           </motion.div>
         </div>
+
+        {/* Comments Section */}
+        {component && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-12"
+          >
+            <Comments componentId={component.id} />
+          </motion.div>
+        )}
 
         {/* Related Components - Chỉ cùng category */}
         {relatedComponents.length > 0 && (
