@@ -247,24 +247,26 @@ const Profile = () => {
                       className="bg-white/80 backdrop-blur-xl rounded-xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all flex flex-col group"
                     >
                       <Link to={`/components/${favorite.componentId}`} className="block">
-                        <div className="relative w-full aspect-video bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                        <div className="relative w-full aspect-video overflow-hidden bg-white">
                           {favorite.component.htmlCode && favorite.component.cssCode ? (
-                            <ComponentPreview
-                              htmlCode={favorite.component.htmlCode}
-                              cssCode={favorite.component.cssCode}
-                              jsCode={favorite.component.jsCode || undefined}
-                              name={favorite.component.name}
-                              height={160}
-                              lazy={true}
-                            />
+                            <>
+                              <ComponentPreview
+                                htmlCode={favorite.component.htmlCode}
+                                cssCode={favorite.component.cssCode}
+                                jsCode={favorite.component.jsCode || undefined}
+                                name={favorite.component.name}
+                                height={160}
+                                lazy={true}
+                              />
+                              <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
+                                {favorite.component.category}
+                              </div>
+                            </>
                           ) : (
                             <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
                               <Code2 className="w-12 h-12 text-gray-400" />
                             </div>
                           )}
-                          <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-semibold z-10">
-                            {favorite.component.category}
-                          </div>
                         </div>
                       </Link>
                       <div className="p-4 flex flex-col flex-1">

@@ -97,7 +97,7 @@ const ComponentPreview = ({
   }
 
   return (
-    <div className="w-full h-full relative bg-white overflow-hidden">
+    <div className="w-full h-full relative bg-white overflow-hidden" style={{ position: 'absolute', inset: 0 }}>
       <iframe
         ref={iframeRef}
         srcDoc={previewDoc}
@@ -105,7 +105,12 @@ const ComponentPreview = ({
         className="absolute inset-0 w-full h-full border-0 pointer-events-none"
         style={{ 
           transform: 'scale(1)',
-          transformOrigin: 'top left'
+          transformOrigin: 'top left',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%'
         }}
         sandbox="allow-scripts allow-same-origin"
         loading="lazy"
