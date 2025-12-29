@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { createPortal } from 'react-dom'
 import { X, Crown, Check, Sparkles, Loader2 } from 'lucide-react'
 import { vipService, VipPlan } from '../services/vipService'
 import { useVipStatus } from '../hooks/useVipStatus'
@@ -66,7 +67,9 @@ const VipPlansModal = ({ isOpen, onClose }: VipPlansModalProps) => {
     return savings > 0 ? Math.round(savings) : null
   }
 
-  return (
+  if (typeof window === 'undefined') return null
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -76,7 +79,7 @@ const VipPlansModal = ({ isOpen, onClose }: VipPlansModalProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto"
+            className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4 overflow-y-auto"
           >
             {/* Modal */}
             <motion.div
@@ -214,7 +217,8 @@ const VipPlansModal = ({ isOpen, onClose }: VipPlansModalProps) => {
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }
 

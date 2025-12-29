@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
+import { createPortal } from 'react-dom'
 import { X, Crown, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -16,7 +17,9 @@ const VipRequiredModal = ({ isOpen, onClose, message }: VipRequiredModalProps) =
     navigate('/profile?tab=vip')
   }
 
-  return (
+  if (typeof window === 'undefined') return null
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -26,7 +29,7 @@ const VipRequiredModal = ({ isOpen, onClose, message }: VipRequiredModalProps) =
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4"
           >
             {/* Modal */}
             <motion.div
@@ -110,7 +113,8 @@ const VipRequiredModal = ({ isOpen, onClose, message }: VipRequiredModalProps) =
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }
 

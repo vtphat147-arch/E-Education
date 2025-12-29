@@ -1,16 +1,20 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Code2, Menu, X, Sparkles, User, LogOut } from 'lucide-react'
+import { Code2, Menu, X, Sparkles, User, LogOut, Crown } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useVipStatus } from '../hooks/useVipStatus'
+import VipPlansModal from '../components/VipPlansModal'
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [shouldAnimate, setShouldAnimate] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [showVipModal, setShowVipModal] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const { user, isAuthenticated, logout } = useAuth()
+  const { vipStatus } = useVipStatus()
 
   useEffect(() => {
     // Check if header animation has already been shown in this session
@@ -102,7 +106,22 @@ const Header = () => {
           </nav>
 
           {/* CTA Button / User Menu */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
+            {/* VIP Button */}
+            {isAuthenticated && (
+              <button
+                onClick={() => setShowVipModal(true)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-300 ${
+                  vipStatus.isVip
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:shadow-lg hover:shadow-amber-500/50'
+                    : 'bg-gradient-to-r from-amber-400 to-orange-400 text-white hover:from-amber-500 hover:to-orange-500'
+                }`}
+              >
+                <Crown className="w-4 h-4" />
+                {vipStatus.isVip ? 'VIP' : 'Nâng cấp VIP'}
+              </button>
+            )}
+            
             {isAuthenticated ? (
               <div className="relative">
                 <button
@@ -118,7 +137,7 @@ const Header = () => {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50"
+                    className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-[60]"
                   >
                     <Link
                       to="/profile"
@@ -223,6 +242,22 @@ const Header = () => {
                     transition={{ delay: navItems.length * 0.1 }}
                     className="pt-4 space-y-2"
                   >
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        setShowVipModal(true)
+                      }}
+                      className={`block w-full px-4 py-3 rounded-lg font-medium transition-all ${
+                        vipStatus.isVip
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white'
+                          : 'bg-gradient-to-r from-amber-400 to-orange-400 text-white'
+                      }`}
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <Crown className="w-4 h-4" />
+                        {vipStatus.isVip ? 'VIP' : 'Nâng cấp VIP'}
+                      </div>
+                    </button>
                     <Link
                       to="/profile"
                       onClick={() => setIsMobileMenuOpen(false)}
@@ -269,6 +304,12 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* VIP Plans Modal */}
+      <VipPlansModal
+        isOpen={showVipModal}
+        onClose={() => setShowVipModal(false)}
+      />
     </motion.header>
   )
 }
