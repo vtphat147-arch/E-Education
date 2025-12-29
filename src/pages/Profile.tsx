@@ -384,8 +384,8 @@ const Profile = () => {
                 {/* Current VIP Status */}
                 <div className={`rounded-xl p-6 ${vipStatus.isVip ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200' : 'bg-gray-50 border-2 border-gray-200'}`}>
                   <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                         {vipStatus.isVip ? (
                           <>
                             <Crown className="w-6 h-6 text-amber-600" />
@@ -398,20 +398,52 @@ const Profile = () => {
                         )}
                       </h3>
                       {vipStatus.isVip && vipStatus.expiresAt ? (
-                        <div className="space-y-1">
-                          <p className="text-gray-700">
-                            <span className="font-semibold">Hết hạn:</span>{' '}
-                            {new Date(vipStatus.expiresAt).toLocaleDateString('vi-VN', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
-                          </p>
-                          {vipStatus.daysRemaining !== null && (
-                            <p className="text-amber-600 font-semibold">
-                              Còn lại {vipStatus.daysRemaining} ngày
+                        <div className="grid md:grid-cols-2 gap-4">
+                          {/* Latest completed payment */}
+                          {paymentHistory.length > 0 && (() => {
+                            const latestPayment = paymentHistory
+                              .filter(p => p.status === 'completed')
+                              .sort((a, b) => new Date(b.completedAt || b.createdAt).getTime() - new Date(a.completedAt || a.createdAt).getTime())[0]
+                            
+                            return latestPayment ? (
+                              <div className="bg-white/70 rounded-lg p-4 border border-amber-200">
+                                <p className="text-sm text-gray-600 mb-1">Ngày thanh toán</p>
+                                <p className="text-lg font-semibold text-gray-900">
+                                  {new Date(latestPayment.completedAt || latestPayment.createdAt).toLocaleDateString('vi-VN', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Gói: {latestPayment.vipPlan.name}
+                                </p>
+                              </div>
+                            ) : null
+                          })()}
+                          
+                          {/* Expiration info */}
+                          <div className="bg-white/70 rounded-lg p-4 border border-amber-200">
+                            <p className="text-sm text-gray-600 mb-1">Hết hạn</p>
+                            <p className="text-lg font-semibold text-gray-900">
+                              {new Date(vipStatus.expiresAt).toLocaleDateString('vi-VN', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })}
                             </p>
-                          )}
+                            {vipStatus.daysRemaining !== null && (
+                              <p className={`text-lg font-bold mt-2 ${
+                                vipStatus.daysRemaining <= 7 ? 'text-red-600' : 
+                                vipStatus.daysRemaining <= 30 ? 'text-orange-600' : 
+                                'text-amber-600'
+                              }`}>
+                                Còn lại {vipStatus.daysRemaining} ngày
+                              </p>
+                            )}
+                          </div>
                         </div>
                       ) : (
                         <p className="text-gray-600">Chưa có gói VIP</p>
@@ -420,7 +452,7 @@ const Profile = () => {
                     {!vipStatus.isVip && (
                       <button
                         onClick={() => setShowVipModal(true)}
-                        className="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all font-medium shadow-lg shadow-amber-500/30"
+                        className="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all font-medium shadow-lg shadow-amber-500/30 ml-4"
                       >
                         Nâng cấp VIP
                       </button>
