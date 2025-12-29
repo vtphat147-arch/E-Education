@@ -9,6 +9,7 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<void>
   googleLogin: (idToken: string) => Promise<void>
   logout: () => void
+  refreshUser: () => Promise<void>
   isAuthenticated: boolean
 }
 
@@ -73,6 +74,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null)
   }
 
+  const refreshUser = async () => {
+    const token = authService.getToken()
+    if (!token) return
+    
+    try {
+      const { userService } = await import('../services/userService')
+      const profile = await userService.getProfile()
+      setUser({
+        id: profile.id,
+        email: profile.email,
+        username: profile.username,
+        fullName: profile.fullName,
+        avatarUrl: profile.avatarUrl,
+        bio: profile.bio,
+        isAdmin: profile.isAdmin,
+        isVip: profile.isVip,
+        vipExpiresAt: profile.vipExpiresAt,
+        daysRemaining: profile.daysRemaining
+      })
+    } catch (error) {
+      console.error('Error refreshing user:', error)
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -82,6 +107,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         register,
         googleLogin,
         logout,
+        refreshUser,
         isAuthenticated: !!user
       }}
     >

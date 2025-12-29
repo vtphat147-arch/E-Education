@@ -9,7 +9,7 @@ import { useAuth } from '../contexts/AuthContext'
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { refreshUser } = useAuth()
   const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading')
   const [vipStatus, setVipStatus] = useState<any>(null)
   const orderCode = searchParams.get('orderCode')
@@ -22,10 +22,32 @@ const PaymentSuccess = () => {
       }
 
       try {
-        // Poll for payment status
+        // Try to verify payment immediately (webhook might have already processed it)
+        try {
+          const result = await vipService.verifyPayment(orderCode)
+          
+          if (result.status === 'completed') {
+            setStatus('success')
+            const vipStatusData = await vipService.getVipStatus()
+            setVipStatus(vipStatusData)
+            
+            // Refresh user context immediately
+            await refreshUser()
+            return
+          } else if (result.status === 'cancelled' || result.status === 'failed') {
+            setStatus('failed')
+            return
+          }
+        } catch (err) {
+          // If first attempt fails, try polling (webhook might be processing)
+          console.log('First verification attempt failed, starting polling...')
+        }
+
+        // Poll for payment status (only if first attempt didn't succeed)
         let attempts = 0
-        const maxAttempts = 20
+        const maxAttempts = 5 // Reduced from 20 to 5 (10 seconds max)
         const pollInterval = 2000 // 2 seconds
+        let pollTimer: NodeJS.Timeout | null = null
 
         const poll = async () => {
           try {
@@ -33,45 +55,62 @@ const PaymentSuccess = () => {
             
             if (result.status === 'completed') {
               setStatus('success')
-              setVipStatus({
-                isVip: result.isVip,
-                expiresAt: result.vipExpiresAt
-              })
+              const vipStatusData = await vipService.getVipStatus()
+              setVipStatus(vipStatusData)
               
-              // Refresh VIP status globally
-              const vipStatus = await vipService.getVipStatus()
-              setVipStatus(vipStatus)
+              // Stop polling
+              if (pollTimer) clearTimeout(pollTimer)
               
-              // Update user in auth context if available
-              if (user && window.location.reload) {
+              // Refresh user context immediately
+              if (window.location.reload) {
                 setTimeout(() => {
-                  window.location.reload() // Force refresh to update user context
-                }, 2000)
+                  window.location.reload()
+                }, 1500)
               }
               return
             } else if (result.status === 'cancelled' || result.status === 'failed') {
               setStatus('failed')
+              if (pollTimer) clearTimeout(pollTimer)
               return
             }
 
             attempts++
             if (attempts < maxAttempts) {
-              setTimeout(poll, pollInterval)
+              pollTimer = setTimeout(poll, pollInterval)
             } else {
-              setStatus('failed')
+              // After max attempts, check status one more time
+              try {
+                const finalResult = await vipService.verifyPayment(orderCode)
+                if (finalResult.status === 'completed') {
+                  setStatus('success')
+                  const vipStatusData = await vipService.getVipStatus()
+                  setVipStatus(vipStatusData)
+                  await refreshUser()
+                } else {
+                  setStatus('failed')
+                }
+              } catch (err) {
+                setStatus('failed')
+              }
             }
           } catch (err) {
             console.error('Error verifying payment:', err)
             attempts++
             if (attempts < maxAttempts) {
-              setTimeout(poll, pollInterval)
+              pollTimer = setTimeout(poll, pollInterval)
             } else {
               setStatus('failed')
             }
           }
         }
 
-        poll()
+        // Start polling after a short delay
+        pollTimer = setTimeout(poll, pollInterval)
+        
+        // Cleanup on unmount
+        return () => {
+          if (pollTimer) clearTimeout(pollTimer)
+        }
       } catch (err) {
         console.error('Error verifying payment:', err)
         setStatus('failed')
