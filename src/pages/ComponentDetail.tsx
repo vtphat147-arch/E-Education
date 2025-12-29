@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Eye, Heart, Copy, Check, Sparkles, Code2, Maximize2, Crown } from 'lucide-react'
+import { ArrowLeft, Eye, Heart, Copy, Check, Sparkles, Code2, Maximize2 } from 'lucide-react'
 import Header from '../cpnents/Header'
 import { designService, DesignComponent } from '../services/api'
 import { useAuth } from '../contexts/AuthContext'
@@ -13,7 +13,6 @@ import ExportDropdown from '../components/ExportDropdown'
 import FrameworkCodeGenerator from '../components/FrameworkCodeGenerator'
 import FullscreenPreview from '../components/FullscreenPreview'
 import VipRequiredModal from '../components/VipRequiredModal'
-import { useVipStatus } from '../hooks/useVipStatus'
 
 const ComponentDetail = () => {
   const { id } = useParams<{ id: string }>()
@@ -28,15 +27,15 @@ const ComponentDetail = () => {
   const [flyingHearts, setFlyingHearts] = useState<Array<{ id: number; x: number; y: number }>>([])
   const [showVipModal, setShowVipModal] = useState(false)
   const { isAuthenticated } = useAuth()
-  const { vipStatus } = useVipStatus()
 
   useEffect(() => {
     const fetchComponent = async () => {
       if (!id) return
       try {
         setLoading(true)
+        let data: DesignComponent
         try {
-          const data = await designService.getComponentById(parseInt(id))
+          data = await designService.getComponentById(parseInt(id))
           setComponent(data)
         } catch (err: any) {
           // Check if it's a VIP required error

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Heart, Eye, Edit2, Save, X, Mail, Code2, Crown, Sparkles } from 'lucide-react'
+import { Heart, Eye, Edit2, Save, X, Mail, Code2, Crown } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import Header from '../cpnents/Header'
 import { useAuth } from '../contexts/AuthContext'
@@ -51,7 +51,7 @@ const Profile = () => {
       setProfile(profileData)
       setFavorites(favoritesData)
       setViewHistory(historyData?.data || [])
-      setPaymentHistory(paymentsData)
+      setPaymentHistory(paymentsData || [])
       setEditData({
         username: profileData.username,
         fullName: profileData.fullName || '',
@@ -375,6 +375,135 @@ const Profile = () => {
                       </div>
                     </Link>
                   ))
+                )}
+              </div>
+            )}
+
+            {activeTab === 'vip' && (
+              <div className="space-y-6">
+                {/* Current VIP Status */}
+                <div className={`rounded-xl p-6 ${vipStatus.isVip ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200' : 'bg-gray-50 border-2 border-gray-200'}`}>
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                        {vipStatus.isVip ? (
+                          <>
+                            <Crown className="w-6 h-6 text-amber-600" />
+                            <span>Bạn đang là thành viên VIP</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Gói hiện tại: Normal</span>
+                          </>
+                        )}
+                      </h3>
+                      {vipStatus.isVip && vipStatus.expiresAt ? (
+                        <div className="space-y-1">
+                          <p className="text-gray-700">
+                            <span className="font-semibold">Hết hạn:</span>{' '}
+                            {new Date(vipStatus.expiresAt).toLocaleDateString('vi-VN', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                          {vipStatus.daysRemaining !== null && (
+                            <p className="text-amber-600 font-semibold">
+                              Còn lại {vipStatus.daysRemaining} ngày
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-gray-600">Chưa có gói VIP</p>
+                      )}
+                    </div>
+                    {!vipStatus.isVip && (
+                      <button
+                        onClick={() => setShowVipModal(true)}
+                        className="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all font-medium shadow-lg shadow-amber-500/30"
+                      >
+                        Nâng cấp VIP
+                      </button>
+                    )}
+                  </div>
+                  
+                  {vipStatus.isVip && (
+                    <div className="bg-white/50 rounded-lg p-4 mt-4">
+                      <p className="font-semibold text-gray-900 mb-2">Quyền lợi VIP:</p>
+                      <ul className="space-y-2 text-sm text-gray-700">
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span>
+                          <span>Xem tất cả components Premium</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span>
+                          <span>Framework Generator (React, Vue, Angular)</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span>
+                          <span>Export ZIP không giới hạn</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span>
+                          <span>Badge VIP trên profile</span>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                {/* Payment History */}
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Lịch sử thanh toán</h3>
+                  {paymentHistory.length === 0 ? (
+                    <div className="text-center py-8 bg-gray-50 rounded-lg">
+                      <p className="text-gray-600">Chưa có lịch sử thanh toán</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {paymentHistory.map((payment) => (
+                        <div key={payment.id} className="bg-white border border-gray-200 rounded-lg p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-semibold text-gray-900">{payment.vipPlan.name}</p>
+                              <p className="text-sm text-gray-600">
+                                {new Date(payment.createdAt).toLocaleDateString('vi-VN')}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-semibold text-gray-900">
+                                {new Intl.NumberFormat('vi-VN').format(payment.amount)} VNĐ
+                              </p>
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                payment.status === 'completed' 
+                                  ? 'bg-green-100 text-green-700' 
+                                  : payment.status === 'pending'
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : 'bg-red-100 text-red-700'
+                              }`}>
+                                {payment.status === 'completed' ? 'Hoàn thành' : 
+                                 payment.status === 'pending' ? 'Đang xử lý' : 'Thất bại'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {!vipStatus.isVip && (
+                  <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-2 border-amber-300 rounded-xl p-6 text-center">
+                    <Crown className="w-12 h-12 text-amber-600 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Nâng cấp VIP ngay hôm nay!</h3>
+                    <p className="text-gray-600 mb-4">Trải nghiệm đầy đủ tính năng với gói VIP</p>
+                    <button
+                      onClick={() => setShowVipModal(true)}
+                      className="px-8 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:from-amber-600 hover:to-orange-600 transition-all font-medium shadow-lg shadow-amber-500/30"
+                    >
+                      Xem các gói VIP
+                    </button>
+                  </div>
                 )}
               </div>
             )}

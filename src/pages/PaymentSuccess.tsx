@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { CheckCircle, Loader2, XCircle, Crown } from 'lucide-react'
+import { CheckCircle, XCircle, Crown } from 'lucide-react'
 import Header from '../cpnents/Header'
 import { vipService } from '../services/vipService'
 import { useAuth } from '../contexts/AuthContext'

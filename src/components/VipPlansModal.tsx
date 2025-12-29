@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { X, Crown, Check, Sparkles, Loader2 } from 'lucide-react'
 import { vipService, VipPlan } from '../services/vipService'
 import { useVipStatus } from '../hooks/useVipStatus'
-import { useNavigate } from 'react-router-dom'
 
 interface VipPlansModalProps {
   isOpen: boolean
@@ -14,8 +13,7 @@ const VipPlansModal = ({ isOpen, onClose }: VipPlansModalProps) => {
   const [plans, setPlans] = useState<VipPlan[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null)
-  const { vipStatus, refreshStatus } = useVipStatus()
-  const navigate = useNavigate()
+  const { vipStatus } = useVipStatus()
 
   useEffect(() => {
     if (isOpen) {
