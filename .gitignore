@@ -28,4 +28,8 @@ Backend/**/appsettings.json
 Backend/**/appsettings.Development.json
 Backend/**/appsettings.Production.json
 
+# PayOS documentation/examples folder
+PAYOS/
+payos/
+
 
