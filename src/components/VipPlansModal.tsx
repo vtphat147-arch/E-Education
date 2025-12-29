@@ -13,21 +13,31 @@ interface VipPlansModalProps {
 const VipPlansModal = ({ isOpen, onClose }: VipPlansModalProps) => {
   const [plans, setPlans] = useState<VipPlan[]>([])
   const [loading, setLoading] = useState(false)
+  const [loadingPlans, setLoadingPlans] = useState(true)
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null)
   const { vipStatus } = useVipStatus()
 
   useEffect(() => {
     if (isOpen) {
       loadPlans()
+    } else {
+      // Reset when closed
+      setPlans([])
+      setLoadingPlans(true)
     }
   }, [isOpen])
 
   const loadPlans = async () => {
     try {
+      setLoadingPlans(true)
       const data = await vipService.getPlans()
+      console.log('Loaded plans:', data)
       setPlans(data)
     } catch (err) {
       console.error('Error loading plans:', err)
+      alert('Không thể tải danh sách gói VIP. Vui lòng thử lại sau.')
+    } finally {
+      setLoadingPlans(false)
     }
   }
 
@@ -129,8 +139,29 @@ const VipPlansModal = ({ isOpen, onClose }: VipPlansModalProps) => {
               )}
 
               {/* Plans Grid */}
-              <div className="grid md:grid-cols-3 gap-6">
-                {plans.map((plan, index) => {
+              {loadingPlans ? (
+                <div className="py-12 text-center">
+                  <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mx-auto mb-4" />
+                  <p className="text-gray-600">Đang tải các gói VIP...</p>
+                </div>
+              ) : plans.length === 0 ? (
+                <div className="py-12 text-center bg-gray-50 rounded-xl p-8">
+                  <Crown className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Chưa có gói VIP</h3>
+                  <p className="text-gray-600 mb-4">Hiện tại chưa có gói VIP nào khả dụng trong hệ thống.</p>
+                  <p className="text-sm text-gray-500 mb-6">
+                    Vui lòng đợi admin thiết lập các gói VIP hoặc liên hệ hỗ trợ.
+                  </p>
+                  <button
+                    onClick={onClose}
+                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                  >
+                    Đóng
+                  </button>
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-3 gap-6">
+                  {plans.map((plan, index) => {
                   const savings = calculateSavings(plan)
                   const isSelected = selectedPlanId === plan.id
 
@@ -206,8 +237,9 @@ const VipPlansModal = ({ isOpen, onClose }: VipPlansModalProps) => {
                       </button>
                     </motion.div>
                   )
-                })}
-              </div>
+                  })}
+                </div>
+              )}
 
               {/* Footer */}
               <div className="mt-8 text-center text-sm text-gray-500">
