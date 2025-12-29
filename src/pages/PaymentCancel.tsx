@@ -1,10 +1,16 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { XCircle, AlertCircle } from 'lucide-react'
 import Header from '../cpnents/Header'
 
 const PaymentCancel = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  
+  // Get PayOS cancel URL params (same as returnUrl but with cancel=true)
+  const orderCode = searchParams.get('orderCode')
+  const payOSStatus = searchParams.get('status') // Usually CANCELLED
+  const payOSCode = searchParams.get('code')
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
@@ -38,6 +44,15 @@ const PaymentCancel = () => {
             <p className="text-gray-600 mb-6">
               Bạn đã hủy quá trình thanh toán. Đơn hàng của bạn chưa được xử lý.
             </p>
+            
+            {orderCode && (
+              <div className="bg-gray-100 rounded-lg p-3 mb-4 text-sm text-gray-700">
+                <p>Mã đơn hàng: <span className="font-mono font-semibold">{orderCode}</span></p>
+                {payOSStatus && (
+                  <p className="mt-1">Trạng thái: <span className="font-semibold">{payOSStatus}</span></p>
+                )}
+              </div>
+            )}
 
             <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
               <p className="font-semibold text-gray-900 mb-2">Bạn có thể:</p>

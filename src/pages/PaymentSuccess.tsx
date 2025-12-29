@@ -12,13 +12,39 @@ const PaymentSuccess = () => {
   const { refreshUser } = useAuth()
   const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading')
   const [vipStatus, setVipStatus] = useState<any>(null)
+  
+  // Get PayOS return URL params
   const orderCode = searchParams.get('orderCode')
+  const payOSCode = searchParams.get('code') // "00" = success
+  const payOSStatus = searchParams.get('status') // PAID, PENDING, PROCESSING, CANCELLED
+  const isCancel = searchParams.get('cancel') === 'true'
+  const paymentLinkId = searchParams.get('id')
 
   useEffect(() => {
     const verifyPayment = async () => {
+      // Check PayOS return URL params first
+      if (isCancel || payOSStatus === 'CANCELLED') {
+        setStatus('failed')
+        return
+      }
+
       if (!orderCode) {
         setStatus('failed')
         return
+      }
+
+      // If PayOS indicates success (code=00 and status=PAID), mark as success immediately
+      if (payOSCode === '00' && payOSStatus === 'PAID') {
+        try {
+          const vipStatusData = await vipService.getVipStatus()
+          setVipStatus(vipStatusData)
+          await refreshUser()
+          setStatus('success')
+          return
+        } catch (err) {
+          console.error('Error getting VIP status:', err)
+          // Continue with verification below
+        }
       }
 
       try {
@@ -114,7 +140,7 @@ const PaymentSuccess = () => {
     }
 
     verifyPayment()
-  }, [orderCode, refreshUser])
+  }, [orderCode, payOSCode, payOSStatus, isCancel, refreshUser])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
