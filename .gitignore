@@ -32,4 +32,7 @@ Backend/**/appsettings.Production.json
 PAYOS/
 payos/
 
+# Backend folder (separate repository)
+Backend/
+
 
